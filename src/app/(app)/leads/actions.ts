@@ -6,6 +6,22 @@ import { createClient } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/org";
 import { collectCustomData, getCustomFields } from "@/lib/custom-fields";
 import { logAudit } from "@/lib/audit";
+import { runAutomations, type LeadSnapshot } from "@/lib/automations/engine";
+
+const LEAD_COLS =
+  "id, organization_id, source, value, stage_id, assigned_to, custom_data";
+
+function snapshot(row: Record<string, unknown>): LeadSnapshot {
+  return {
+    id: String(row.id),
+    organization_id: String(row.organization_id),
+    source: String(row.source ?? ""),
+    value: (row.value as number) ?? null,
+    stage_id: (row.stage_id as string) ?? null,
+    assigned_to: (row.assigned_to as string) ?? null,
+    custom_data: (row.custom_data as Record<string, unknown>) ?? {},
+  };
+}
 
 export async function createLead(formData: FormData) {
   const { organization, userId } = await getOrgContext();
@@ -29,7 +45,7 @@ export async function createLead(formData: FormData) {
       assigned_to: userId,
       custom_data: collectCustomData(formData, fields),
     })
-    .select("id")
+    .select(LEAD_COLS)
     .single();
 
   if (error) {
@@ -44,6 +60,11 @@ export async function createLead(formData: FormData) {
     body: "Lead created",
   });
   await logAudit(organization.id, "lead.create", String(formData.get("name") || ""));
+
+  await runAutomations(supabase, organization.id, {
+    type: "lead.created",
+    lead: snapshot(lead!),
+  });
 
   revalidatePath("/leads");
   revalidatePath("/pipeline");
@@ -74,6 +95,19 @@ export async function updateLeadStage(leadId: string, stageId: string) {
       type: "stage_change",
       body: `Moved to ${stage?.name ?? "a new stage"}`,
     });
+
+    const { data: row } = await supabase
+      .from("leads")
+      .select(LEAD_COLS)
+      .eq("id", leadId)
+      .single();
+    if (row) {
+      await runAutomations(supabase, organization.id, {
+        type: "lead.stage_changed",
+        lead: snapshot(row),
+        stageId,
+      });
+    }
   }
 
   revalidatePath("/pipeline");
@@ -155,6 +189,18 @@ export async function assignLead(formData: FormData) {
       type: "assigned",
       body: assignee ? "Lead reassigned" : "Lead unassigned",
     });
+
+    const { data: row } = await supabase
+      .from("leads")
+      .select(LEAD_COLS)
+      .eq("id", leadId)
+      .single();
+    if (row) {
+      await runAutomations(supabase, organization.id, {
+        type: "lead.assigned",
+        lead: snapshot(row),
+      });
+    }
   }
 
   revalidatePath(`/leads/${leadId}`);

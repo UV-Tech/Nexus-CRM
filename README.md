@@ -22,6 +22,9 @@ Security.
   dropdown/checkbox); they render on every lead form and export.
 - **Channel intake** — a per-org webhook URL ingests leads from Facebook Lead
   Ads, Instagram, WhatsApp, Zapier/Make, or custom forms.
+- **Automations** — an n8n-style node canvas (React Flow) to build flows that
+  run on lead events (created / stage changed / assigned). Organize in folders,
+  enable/disable, and generate a flow from plain text with the local "agent".
 - **Search, filter, CSV import/export** — find leads fast and move data in/out.
 - **Auth** — email/password sign-up provisions a workspace + starter pipeline.
 
@@ -44,8 +47,8 @@ Settings → API** copy the project URL, the `anon` key, and the `service_role` 
 ### 2. Run the migration
 
 In the Supabase SQL editor, run the migration files in `supabase/migrations/`
-in order (`0001` → `0002` → `0003` → `0004` → `0005`). These create all tables,
-RLS policies, and helper functions.
+in order (`0001` → `0002` → `0003` → `0004` → `0005` → `0006`). These create all
+tables, RLS policies, and helper functions.
 
 > For local development with the Supabase CLI: `supabase db reset` will apply
 > migrations in `supabase/migrations/`.
@@ -148,12 +151,19 @@ supabase/migrations/    # schema + RLS
 
 ## Roadmap / not yet built
 
+- **Integrations screen**: OAuth connections for Facebook/Instagram (ad
+  accounts, pages, lead forms), Google Ads, and WhatsApp (inbox + reply +
+  templates). The automation actions for these channels are scaffolded and run
+  once the integration is connected.
 - Sending invite links by email (links are generated; delivery is manual).
+- Replacing the local automation generator with the Claude API.
 - Per-tenant plan limits & billing (Stripe).
 - Time-series reporting and CSV export of reports.
 
 ### Recently added
 
+- Automations: node-canvas editor, folders, local AI builder, execution engine
+  wired into lead create / stage change / assignment (migration 0006).
 - Interactive, animated onboarding wizard (`/welcome`) tailored by business
   type, with editable pipeline/fields, team invites, and skip (migration 0005).
 - Activity (audit) log incl. platform-admin access; per-org view in Settings.

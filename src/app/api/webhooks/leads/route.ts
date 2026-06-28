@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import crypto from "crypto";
 import { createServiceClient } from "@/lib/supabase/server";
+import { runAutomations } from "@/lib/automations/engine";
 
 // Verifies an optional HMAC-SHA256 signature (hex, optionally "sha256=" prefixed)
 // of the raw body against the org's webhook secret. Returns true if no signature
@@ -136,7 +137,7 @@ export async function POST(req: NextRequest) {
       notes: str(payload.notes),
       custom_data: custom,
     })
-    .select("id")
+    .select("id, organization_id, source, value, stage_id, assigned_to, custom_data")
     .single();
 
   if (insertError) {
@@ -148,6 +149,20 @@ export async function POST(req: NextRequest) {
     lead_id: lead.id,
     type: "created",
     body: `Lead captured via ${str(payload.source) || "webhook"}`,
+  });
+
+  // Fire automations for the new lead (best-effort).
+  await runAutomations(supabase, org.id, {
+    type: "lead.created",
+    lead: {
+      id: lead.id,
+      organization_id: lead.organization_id,
+      source: lead.source,
+      value: lead.value,
+      stage_id: lead.stage_id,
+      assigned_to: lead.assigned_to,
+      custom_data: (lead.custom_data ?? {}) as Record<string, unknown>,
+    },
   });
 
   return NextResponse.json({ ok: true, id: lead.id }, { status: 201 });
