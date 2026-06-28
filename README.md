@@ -105,10 +105,10 @@ supabase/migrations/    # schema + RLS
 
 ## Roadmap / not yet built
 
-- Email invitations for teammates (UI placeholder exists; roster is live).
-- Multi-organization switching for users in more than one workspace.
+- Sending invite links by email (links are generated; delivery is manual).
+- A platform-owner/super-admin console to provision and oversee tenants.
 - Signed webhook verification (HMAC) for direct Meta/WhatsApp integrations.
-- Reporting / analytics dashboards beyond the current summary stats.
+- Time-series reporting and CSV export of reports.
 
 ### Recently added
 
@@ -116,3 +116,7 @@ supabase/migrations/    # schema + RLS
 - Custom lead field definitions (UI + storage).
 - CSV import / export.
 - Lead search, stage/source filters, and lead deletion.
+- Team invitations via shareable invite links (migration 0003).
+- Multi-organization switching (active-org cookie + sidebar switcher).
+- Lead assignment to team members.
+- Reports page (win rate, leads by source, pipeline by stage).

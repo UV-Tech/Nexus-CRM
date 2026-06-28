@@ -3,17 +3,25 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
+// Only allow internal relative paths as a post-login destination.
+function safeNext(next: string): string {
+  return next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+}
+
 export async function signIn(formData: FormData) {
   const email = String(formData.get("email") || "");
   const password = String(formData.get("password") || "");
+  const next = safeNext(String(formData.get("next") || "/dashboard"));
 
   const supabase = createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    redirect(`/login?error=${encodeURIComponent(error.message)}`);
+    redirect(
+      `/login?error=${encodeURIComponent(error.message)}&next=${encodeURIComponent(next)}`
+    );
   }
-  redirect("/dashboard");
+  redirect(next);
 }
 
 export async function signUp(formData: FormData) {
@@ -21,6 +29,7 @@ export async function signUp(formData: FormData) {
   const password = String(formData.get("password") || "");
   const fullName = String(formData.get("full_name") || "");
   const orgName = String(formData.get("org_name") || "");
+  const next = safeNext(String(formData.get("next") || "/dashboard"));
 
   const supabase = createClient();
   const { data, error } = await supabase.auth.signUp({
@@ -33,9 +42,12 @@ export async function signUp(formData: FormData) {
     redirect(`/login?mode=signup&error=${encodeURIComponent(error.message)}`);
   }
 
-  // If email confirmation is disabled, we have a session now and can provision
-  // the organization immediately.
+  // If email confirmation is disabled, we have a session now.
   if (data.session) {
+    // Arriving via an invite link: join that org instead of creating a new one.
+    if (next !== "/dashboard") {
+      redirect(next);
+    }
     const { error: rpcError } = await supabase.rpc("create_organization", {
       org_name: orgName || `${fullName || email}'s workspace`,
     });

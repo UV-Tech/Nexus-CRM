@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { getOrgContext } from "@/lib/org";
+import { getOrgContext, getUserOrganizations } from "@/lib/org";
 import { signOut } from "@/app/login/actions";
+import { switchOrg } from "./actions";
 
 const NAV = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/leads", label: "Leads" },
   { href: "/pipeline", label: "Pipeline" },
+  { href: "/reports", label: "Reports" },
   { href: "/settings", label: "Settings" },
 ];
 
@@ -15,6 +17,7 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   const { organization, role } = await getOrgContext();
+  const orgs = await getUserOrganizations();
 
   return (
     <div className="flex min-h-screen">
@@ -23,9 +26,28 @@ export default async function AppLayout({
           <p className="text-lg font-bold text-slate-900">
             Nexus <span className="text-brand-600">CRM</span>
           </p>
-          <p className="mt-1 truncate text-sm text-slate-500">
-            {organization.name}
-          </p>
+          {orgs.length > 1 ? (
+            <form action={switchOrg} className="mt-2">
+              <select
+                name="org_id"
+                defaultValue={organization.id}
+                className="w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
+              >
+                {orgs.map((o) => (
+                  <option key={o.organization.id} value={o.organization.id}>
+                    {o.organization.name}
+                  </option>
+                ))}
+              </select>
+              <button className="mt-1 text-xs text-brand-600 hover:underline">
+                Switch
+              </button>
+            </form>
+          ) : (
+            <p className="mt-1 truncate text-sm text-slate-500">
+              {organization.name}
+            </p>
+          )}
         </div>
         <nav className="flex flex-1 flex-col gap-1 p-3">
           {NAV.map((item) => (

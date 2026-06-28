@@ -133,6 +133,31 @@ export async function updateLead(formData: FormData) {
   redirect(`/leads/${leadId}`);
 }
 
+export async function assignLead(formData: FormData) {
+  const { organization, userId } = await getOrgContext();
+  const supabase = createClient();
+  const leadId = String(formData.get("lead_id"));
+  const assignee = String(formData.get("assigned_to") || "") || null;
+
+  const { error } = await supabase
+    .from("leads")
+    .update({ assigned_to: assignee })
+    .eq("id", leadId)
+    .eq("organization_id", organization.id);
+
+  if (!error) {
+    await supabase.from("lead_activities").insert({
+      organization_id: organization.id,
+      lead_id: leadId,
+      author_id: userId,
+      type: "assigned",
+      body: assignee ? "Lead reassigned" : "Lead unassigned",
+    });
+  }
+
+  revalidatePath(`/leads/${leadId}`);
+}
+
 export async function deleteLead(formData: FormData) {
   const { organization } = await getOrgContext();
   const supabase = createClient();

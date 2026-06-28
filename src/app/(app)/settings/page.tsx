@@ -4,7 +4,9 @@ import { getOrgContext } from "@/lib/org";
 import {
   addCustomField,
   addStage,
+  createInvitation,
   deleteCustomField,
+  deleteInvitation,
   deleteStage,
   regenerateIntakeToken,
 } from "./actions";
@@ -22,36 +24,56 @@ interface MemberRow {
   profiles: { full_name: string | null } | null;
 }
 
+interface InvitationRow {
+  id: string;
+  email: string | null;
+  role: OrgRole;
+  token: string;
+  accepted_at: string | null;
+}
+
 export default async function SettingsPage() {
   const { organization, role } = await getOrgContext();
   const supabase = createClient();
   const canManage = role === "owner" || role === "admin";
 
-  const [{ data: stages }, { data: members }, { data: customFields }] =
-    await Promise.all([
-      supabase
-        .from("pipeline_stages")
-        .select("*")
-        .eq("organization_id", organization.id)
-        .order("position"),
-      supabase
-        .from("organization_members")
-        .select("user_id, role, profiles(full_name)")
-        .eq("organization_id", organization.id),
-      supabase
-        .from("custom_field_definitions")
-        .select("*")
-        .eq("organization_id", organization.id)
-        .order("position"),
-    ]);
+  const [
+    { data: stages },
+    { data: members },
+    { data: customFields },
+    { data: invitations },
+  ] = await Promise.all([
+    supabase
+      .from("pipeline_stages")
+      .select("*")
+      .eq("organization_id", organization.id)
+      .order("position"),
+    supabase
+      .from("organization_members")
+      .select("user_id, role, profiles(full_name)")
+      .eq("organization_id", organization.id),
+    supabase
+      .from("custom_field_definitions")
+      .select("*")
+      .eq("organization_id", organization.id)
+      .order("position"),
+    supabase
+      .from("invitations")
+      .select("id, email, role, token, accepted_at")
+      .eq("organization_id", organization.id)
+      .is("accepted_at", null)
+      .order("created_at", { ascending: false }),
+  ]);
 
   const allStages = (stages ?? []) as PipelineStage[];
   const allMembers = (members ?? []) as unknown as MemberRow[];
   const allCustomFields = (customFields ?? []) as CustomFieldDefinition[];
+  const allInvitations = (invitations ?? []) as InvitationRow[];
 
   const host = headers().get("host") ?? "your-app.example.com";
   const proto = host.startsWith("localhost") ? "http" : "https";
   const webhookUrl = `${proto}://${host}/api/webhooks/leads?token=${organization.intake_token}`;
+  const inviteBase = `${proto}://${host}/invite/`;
 
   return (
     <div className="p-8">
@@ -245,9 +267,71 @@ export default async function SettingsPage() {
             </li>
           ))}
         </ul>
+        {canManage && (
+          <>
+            <form
+              action={createInvitation}
+              className="mt-5 flex flex-wrap items-end gap-3 border-t border-slate-100 pt-5"
+            >
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="font-medium text-slate-700">
+                  Invite teammate (email optional)
+                </span>
+                <input
+                  name="email"
+                  type="email"
+                  placeholder="teammate@company.com"
+                  className="w-64 rounded-lg border border-slate-300 px-3 py-2"
+                />
+              </label>
+              <label className="flex flex-col gap-1 text-sm">
+                <span className="font-medium text-slate-700">Role</span>
+                <select
+                  name="role"
+                  defaultValue="agent"
+                  className="rounded-lg border border-slate-300 px-3 py-2"
+                >
+                  <option value="agent">Agent</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </label>
+              <button className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+                Create invite link
+              </button>
+            </form>
+
+            {allInvitations.length > 0 && (
+              <ul className="mt-4 flex flex-col gap-2">
+                {allInvitations.map((inv) => (
+                  <li
+                    key={inv.id}
+                    className="flex items-center justify-between gap-3 rounded-lg border border-slate-100 px-3 py-2"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm text-slate-700">
+                        {inv.email || "Open invite"} ·{" "}
+                        <span className="text-slate-400">{inv.role}</span>
+                      </p>
+                      <p className="truncate font-mono text-xs text-slate-400">
+                        {inviteBase}
+                        {inv.token}
+                      </p>
+                    </div>
+                    <form action={deleteInvitation}>
+                      <input type="hidden" name="invitation_id" value={inv.id} />
+                      <button className="shrink-0 text-sm text-slate-400 hover:text-red-600">
+                        Revoke
+                      </button>
+                    </form>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+        )}
         <p className="mt-3 text-xs text-slate-400">
-          Inviting teammates by email is coming next. For now members are added
-          via the database or sign-up flow.
+          Share an invite link with a teammate. They sign in and join this
+          organization with the role you chose.
         </p>
       </section>
     </div>

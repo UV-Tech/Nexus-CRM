@@ -4,9 +4,10 @@ import { signIn, signUp } from "./actions";
 export default function LoginPage({
   searchParams,
 }: {
-  searchParams: { mode?: string; error?: string; confirm?: string };
+  searchParams: { mode?: string; error?: string; confirm?: string; next?: string };
 }) {
   const isSignup = searchParams.mode === "signup";
+  const next = searchParams.next ?? "/dashboard";
 
   return (
     <main className="flex min-h-screen items-center justify-center px-6">
@@ -35,6 +36,7 @@ export default function LoginPage({
           action={isSignup ? signUp : signIn}
           className="mt-6 flex flex-col gap-4"
         >
+          <input type="hidden" name="next" value={next} />
           {isSignup && (
             <>
               <Field label="Full name" name="full_name" type="text" required />
@@ -62,7 +64,10 @@ export default function LoginPage({
           {isSignup ? (
             <>
               Already have an account?{" "}
-              <Link href="/login" className="font-medium text-brand-600">
+              <Link
+                href={`/login?next=${encodeURIComponent(next)}`}
+                className="font-medium text-brand-600"
+              >
                 Sign in
               </Link>
             </>
@@ -70,7 +75,7 @@ export default function LoginPage({
             <>
               New here?{" "}
               <Link
-                href="/login?mode=signup"
+                href={`/login?mode=signup&next=${encodeURIComponent(next)}`}
                 className="font-medium text-brand-600"
               >
                 Create a workspace

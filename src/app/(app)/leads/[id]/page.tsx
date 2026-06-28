@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/org";
 import {
   addActivity,
+  assignLead,
   deleteLead,
   moveLeadStage,
   updateLead,
@@ -32,7 +33,7 @@ export default async function LeadDetailPage({
   if (!lead) notFound();
   const l = lead as Lead;
 
-  const [{ data: stages }, { data: activities }, customFields] =
+  const [{ data: stages }, { data: activities }, { data: members }, customFields] =
     await Promise.all([
       supabase
         .from("pipeline_stages")
@@ -44,11 +45,19 @@ export default async function LeadDetailPage({
         .select("*")
         .eq("lead_id", l.id)
         .order("created_at", { ascending: false }),
+      supabase
+        .from("organization_members")
+        .select("user_id, profiles(full_name)")
+        .eq("organization_id", organization.id),
       getCustomFields(organization.id),
     ]);
 
   const allStages = (stages ?? []) as PipelineStage[];
   const allActivities = (activities ?? []) as LeadActivity[];
+  const allMembers = (members ?? []) as unknown as {
+    user_id: string;
+    profiles: { full_name: string | null } | null;
+  }[];
 
   return (
     <div className="p-8">
@@ -64,23 +73,43 @@ export default async function LeadDetailPage({
             <span className="capitalize">{l.source}</span>
           </p>
         </div>
-        <form action={moveLeadStage} className="flex items-center gap-2">
-          <input type="hidden" name="lead_id" value={l.id} />
-          <select
-            name="stage_id"
-            defaultValue={l.stage_id ?? ""}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
-          >
-            {allStages.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-          <button className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
-            Move
-          </button>
-        </form>
+        <div className="flex flex-col items-end gap-2">
+          <form action={moveLeadStage} className="flex items-center gap-2">
+            <input type="hidden" name="lead_id" value={l.id} />
+            <select
+              name="stage_id"
+              defaultValue={l.stage_id ?? ""}
+              className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            >
+              {allStages.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+            <button className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+              Move
+            </button>
+          </form>
+          <form action={assignLead} className="flex items-center gap-2">
+            <input type="hidden" name="lead_id" value={l.id} />
+            <select
+              name="assigned_to"
+              defaultValue={l.assigned_to ?? ""}
+              className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            >
+              <option value="">Unassigned</option>
+              {allMembers.map((m) => (
+                <option key={m.user_id} value={m.user_id}>
+                  {m.profiles?.full_name ?? "Member"}
+                </option>
+              ))}
+            </select>
+            <button className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100">
+              Assign
+            </button>
+          </form>
+        </div>
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">

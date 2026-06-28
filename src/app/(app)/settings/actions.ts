@@ -102,6 +102,37 @@ export async function deleteCustomField(formData: FormData) {
   revalidatePath("/leads");
 }
 
+export async function createInvitation(formData: FormData) {
+  const { organization, userId } = await getOrgContext();
+  const supabase = createClient();
+
+  const email = String(formData.get("email") || "").trim() || null;
+  const role = String(formData.get("role") || "agent");
+
+  await supabase.from("invitations").insert({
+    organization_id: organization.id,
+    email,
+    role,
+    invited_by: userId,
+  });
+
+  revalidatePath("/settings");
+}
+
+export async function deleteInvitation(formData: FormData) {
+  const { organization } = await getOrgContext();
+  const supabase = createClient();
+  const id = String(formData.get("invitation_id"));
+
+  await supabase
+    .from("invitations")
+    .delete()
+    .eq("id", id)
+    .eq("organization_id", organization.id);
+
+  revalidatePath("/settings");
+}
+
 export async function regenerateIntakeToken() {
   const { organization } = await getOrgContext();
   const supabase = createClient();
