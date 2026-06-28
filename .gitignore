@@ -26,3 +26,6 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# self-hosted Supabase clone (created by scripts/setup-selfhost.sh)
+/.supabase-selfhost
