@@ -25,6 +25,10 @@ Security.
 - **Automations** — an n8n-style node canvas (React Flow) to build flows that
   run on lead events (created / stage changed / assigned). Organize in folders,
   enable/disable, and generate a flow from plain text with the local "agent".
+- **Integrations** — connect Facebook, Instagram, Google Ads and WhatsApp
+  (manual credentials now; one-click OAuth wires in when an app is registered).
+- **WhatsApp inbox** — see and reply to conversations inside the CRM, with
+  one-click message templates; inbound messages arrive via a webhook.
 - **Search, filter, CSV import/export** — find leads fast and move data in/out.
 - **Auth** — email/password sign-up provisions a workspace + starter pipeline.
 
@@ -47,8 +51,8 @@ Settings → API** copy the project URL, the `anon` key, and the `service_role` 
 ### 2. Run the migration
 
 In the Supabase SQL editor, run the migration files in `supabase/migrations/`
-in order (`0001` → `0002` → `0003` → `0004` → `0005` → `0006`). These create all
-tables, RLS policies, and helper functions.
+in order (`0001` → … → `0007`). These create all tables, RLS policies, and
+helper functions.
 
 > For local development with the Supabase CLI: `supabase db reset` will apply
 > migrations in `supabase/migrations/`.
@@ -151,17 +155,19 @@ supabase/migrations/    # schema + RLS
 
 ## Roadmap / not yet built
 
-- **Integrations screen**: OAuth connections for Facebook/Instagram (ad
-  accounts, pages, lead forms), Google Ads, and WhatsApp (inbox + reply +
-  templates). The automation actions for these channels are scaffolded and run
-  once the integration is connected.
+- Live OAuth for Facebook/Instagram/Google Ads and live WhatsApp send/receive
+  (needs registered vendor apps + approval; the UI, data model and webhooks are
+  ready and switch on once credentials are provided).
+- Pulling ad/campaign data from connected Facebook/Google Ads accounts.
 - Sending invite links by email (links are generated; delivery is manual).
 - Replacing the local automation generator with the Claude API.
 - Per-tenant plan limits & billing (Stripe).
-- Time-series reporting and CSV export of reports.
 
 ### Recently added
 
+- Integrations screen (Facebook/Instagram/Google Ads/WhatsApp) with connect/
+  disconnect and per-provider credentials; WhatsApp inbox with reply + message
+  templates and an inbound webhook (migration 0007).
 - Automations: node-canvas editor, folders, local AI builder, execution engine
   wired into lead create / stage change / assignment (migration 0006).
 - Interactive, animated onboarding wizard (`/welcome`) tailored by business
