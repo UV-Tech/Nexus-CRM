@@ -31,21 +31,21 @@ export default async function InvitePage({
     <main className="flex min-h-screen items-center justify-center px-6">
       <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900">
-          You&apos;re invited
+          הוזמנתם
         </h1>
 
         {!preview ? (
           <p className="mt-4 text-sm text-red-600">
-            This invitation is invalid or has expired.
+            ההזמנה אינה תקפה או שתוקפה פג.
           </p>
         ) : preview.accepted ? (
           <p className="mt-4 text-sm text-slate-600">
-            This invitation has already been used.
+            כבר נעשה שימוש בהזמנה זו.
           </p>
         ) : (
           <>
             <p className="mt-4 text-slate-600">
-              Join <strong>{preview.organization_name}</strong> as{" "}
+              הצטרפו אל <strong>{preview.organization_name}</strong> בתפקיד{" "}
               <strong>{preview.role}</strong>.
             </p>
 
@@ -59,19 +59,19 @@ export default async function InvitePage({
               <form action={acceptInvite} className="mt-6">
                 <input type="hidden" name="token" value={params.token} />
                 <button className="w-full rounded-lg bg-brand-600 px-4 py-2.5 font-medium text-white hover:bg-brand-700">
-                  Accept invitation
+                  אישור ההזמנה
                 </button>
               </form>
             ) : (
               <div className="mt-6">
                 <p className="text-sm text-slate-500">
-                  Sign in or create an account to accept.
+                  התחברו או צרו חשבון כדי לאשר.
                 </p>
                 <Link
                   href={`/login?next=/invite/${params.token}`}
                   className="mt-3 inline-block rounded-lg bg-brand-600 px-4 py-2.5 font-medium text-white hover:bg-brand-700"
                 >
-                  Continue
+                  המשך
                 </Link>
               </div>
             )}

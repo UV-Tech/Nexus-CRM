@@ -26,16 +26,16 @@ export default async function AdminLayout({
             Nexus <span className="text-brand-600">CRM</span>
           </Link>
           <span className="rounded-full bg-slate-900 px-2.5 py-0.5 text-xs font-medium text-white">
-            Platform admin
+            מנהל פלטפורמה
           </span>
         </div>
         <div className="flex items-center gap-4 text-sm">
           <Link href="/dashboard" className="text-slate-600 hover:text-slate-900">
-            App view
+            תצוגת האפליקציה
           </Link>
           <form action={signOut}>
             <button className="text-slate-600 hover:text-slate-900">
-              Sign out
+              התנתקות
             </button>
           </form>
         </div>

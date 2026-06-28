@@ -12,12 +12,12 @@ import {
 import { completeOnboarding, skipOnboarding } from "@/app/welcome/actions";
 
 const STEP_TITLES = [
-  "Welcome",
-  "Business type",
-  "Pipeline",
-  "Custom fields",
-  "Invite your team",
-  "All set",
+  "ברוכים הבאים",
+  "סוג העסק",
+  "צינור מכירות",
+  "שדות מותאמים אישית",
+  "הזמנת הצוות",
+  "הכול מוכן",
 ];
 
 const COLORS = [
@@ -83,7 +83,7 @@ export function OnboardingWizard({ orgName }: { orgName: string }) {
           <div className="flex items-center justify-between text-xs font-medium text-slate-400">
             <span>{STEP_TITLES[step]}</span>
             <span>
-              Step {Math.min(step + 1, STEP_TITLES.length)} /{" "}
+              שלב {Math.min(step + 1, STEP_TITLES.length)} /{" "}
               {STEP_TITLES.length}
             </span>
           </div>
@@ -137,7 +137,7 @@ export function OnboardingWizard({ orgName }: { orgName: string }) {
               onClick={() => go(step - 1)}
               className="text-sm font-medium text-slate-500 hover:text-slate-800"
             >
-              ← Back
+              → חזרה
             </button>
             <div className="flex items-center gap-4">
               <button
@@ -145,7 +145,7 @@ export function OnboardingWizard({ orgName }: { orgName: string }) {
                 disabled={submitting}
                 className="text-sm font-medium text-slate-400 hover:text-slate-700"
               >
-                Skip setup
+                דילוג על ההגדרה
               </button>
               {step < 4 ? (
                 <button
@@ -153,7 +153,7 @@ export function OnboardingWizard({ orgName }: { orgName: string }) {
                   disabled={step === 1 && !typeKey}
                   className="rounded-lg bg-brand-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-40"
                 >
-                  Continue
+                  המשך
                 </button>
               ) : (
                 <button
@@ -161,7 +161,7 @@ export function OnboardingWizard({ orgName }: { orgName: string }) {
                   disabled={submitting}
                   className="rounded-lg bg-brand-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-60"
                 >
-                  {submitting ? "Setting up…" : "Finish setup"}
+                  {submitting ? "מגדיר…" : "סיום ההגדרה"}
                 </button>
               )}
             </div>
@@ -169,7 +169,7 @@ export function OnboardingWizard({ orgName }: { orgName: string }) {
         )}
 
         <p className="mt-6 text-center text-xs text-slate-400">
-          You can change anything here later in Settings — nothing is final.
+          אפשר לשנות כל דבר כאן מאוחר יותר בהגדרות — שום דבר אינו סופי.
         </p>
       </div>
     </main>
@@ -196,19 +196,18 @@ function StepWelcome({
         👋
       </motion.div>
       <h1 className="mt-6 text-3xl font-bold text-slate-900">
-        Welcome to {orgName}
+        ברוכים הבאים אל {orgName}
       </h1>
       <p className="mx-auto mt-3 max-w-md text-slate-600">
-        Let&apos;s set up your CRM in under a minute. We&apos;ll tailor your
-        pipeline and fields to your business — and you can tweak everything
-        later.
+        בואו נגדיר את ה-CRM שלכם בפחות מדקה. נתאים את צינור המכירות והשדות לעסק
+        שלכם — ותוכלו לשנות הכול מאוחר יותר.
       </p>
       <div className="mt-8 flex items-center justify-center gap-4">
         <button
           onClick={onStart}
           className="rounded-lg bg-brand-600 px-8 py-3 font-medium text-white hover:bg-brand-700"
         >
-          Let&apos;s go
+          בואו נתחיל
         </button>
       </div>
     </div>
@@ -219,10 +218,10 @@ function StepType({ onChoose }: { onChoose: (key: string) => void }) {
   return (
     <div>
       <h2 className="text-2xl font-bold text-slate-900">
-        What kind of business is this?
+        איזה סוג עסק זה?
       </h2>
       <p className="mt-1 text-slate-500">
-        We&apos;ll suggest a pipeline and fields to match. Pick the closest one.
+        נציע צינור מכירות ושדות מתאימים. בחרו את האפשרות הקרובה ביותר.
       </p>
       <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
         {BUSINESS_TYPES.map((b, i) => (
@@ -263,15 +262,15 @@ function StepStages({
   const add = () =>
     setStages([
       ...stages,
-      { name: "New stage", color: COLORS[stages.length % COLORS.length] },
+      { name: "שלב חדש", color: COLORS[stages.length % COLORS.length] },
     ]);
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-slate-900">Your pipeline</h2>
+      <h2 className="text-2xl font-bold text-slate-900">צינור המכירות שלכם</h2>
       <p className="mt-1 text-slate-500">
-        These are the stages a lead moves through. Rename, recolor, reorder by
-        removing/adding — or keep as is.
+        אלו השלבים שליד עובר דרכם. שנו שם, שנו צבע, סדרו מחדש על ידי הסרה/הוספה —
+        או השאירו כפי שהם.
       </p>
       <div className="mt-6 flex flex-col gap-2">
         {stages.map((s, i) => (
@@ -292,10 +291,10 @@ function StepStages({
               className="flex-1 rounded-lg border border-slate-200 px-3 py-1.5 text-sm"
             />
             {s.isWon && (
-              <span className="text-xs font-medium text-green-600">won</span>
+              <span className="text-xs font-medium text-green-600">זכייה</span>
             )}
             {s.isLost && (
-              <span className="text-xs font-medium text-red-600">lost</span>
+              <span className="text-xs font-medium text-red-600">הפסד</span>
             )}
             <button
               onClick={() => remove(i)}
@@ -310,7 +309,7 @@ function StepStages({
         onClick={add}
         className="mt-3 rounded-lg border border-dashed border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 hover:border-brand-400 hover:text-brand-600"
       >
-        + Add stage
+        + הוספת שלב
       </button>
     </div>
   );
@@ -348,10 +347,10 @@ function StepFields({
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-slate-900">Custom fields</h2>
+      <h2 className="text-2xl font-bold text-slate-900">שדות מותאמים אישית</h2>
       <p className="mt-1 text-slate-500">
-        Extra info you want on every lead. We pre-filled a few — remove any, or
-        add your own.
+        מידע נוסף שתרצו על כל ליד. מילאנו כמה מראש — הסירו לפי הצורך, או הוסיפו
+        משלכם.
       </p>
 
       <div className="mt-6 flex flex-col gap-2">
@@ -382,18 +381,18 @@ function StepFields({
         ))}
         {fields.length === 0 && (
           <p className="text-sm text-slate-400">
-            No custom fields — that&apos;s fine, you can add them anytime.
+            אין שדות מותאמים אישית — זה בסדר, אפשר להוסיף אותם בכל עת.
           </p>
         )}
       </div>
 
       <div className="mt-4 rounded-xl border border-dashed border-slate-300 p-4">
-        <p className="text-sm font-medium text-slate-700">Add a field</p>
+        <p className="text-sm font-medium text-slate-700">הוספת שדה</p>
         <div className="mt-2 flex flex-wrap items-end gap-2">
           <input
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            placeholder="Field label"
+            placeholder="תווית השדה"
             className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
           />
           <select
@@ -401,17 +400,17 @@ function StepFields({
             onChange={(e) => setType(e.target.value as FieldPreset["type"])}
             className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
           >
-            <option value="text">Text</option>
-            <option value="number">Number</option>
-            <option value="date">Date</option>
-            <option value="select">Dropdown</option>
-            <option value="checkbox">Checkbox</option>
+            <option value="text">טקסט</option>
+            <option value="number">מספר</option>
+            <option value="date">תאריך</option>
+            <option value="select">רשימה נפתחת</option>
+            <option value="checkbox">תיבת סימון</option>
           </select>
           {type === "select" && (
             <input
               value={options}
               onChange={(e) => setOptions(e.target.value)}
-              placeholder="comma,separated"
+              placeholder="מופרד,בפסיקים"
               className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
           )}
@@ -419,7 +418,7 @@ function StepFields({
             onClick={add}
             className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
           >
-            Add
+            הוספה
           </button>
         </div>
       </div>
@@ -442,10 +441,10 @@ function StepInvites({
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-slate-900">Invite your team</h2>
+      <h2 className="text-2xl font-bold text-slate-900">הזמינו את הצוות שלכם</h2>
       <p className="mt-1 text-slate-500">
-        Add key people now and we&apos;ll generate invite links. Optional — you
-        can invite anyone later from Settings.
+        הוסיפו אנשי מפתח עכשיו ונפיק קישורי הזמנה. אופציונלי — תוכלו להזמין כל
+        אחד מאוחר יותר דרך ההגדרות.
       </p>
       <div className="mt-6 flex flex-col gap-2">
         {invites.map((inv, i) => (
@@ -462,8 +461,8 @@ function StepInvites({
               onChange={(e) => update(i, { role: e.target.value })}
               className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
             >
-              <option value="agent">Agent</option>
-              <option value="admin">Admin</option>
+              <option value="agent">נציג</option>
+              <option value="admin">מנהל</option>
             </select>
             <button
               onClick={() => remove(i)}
@@ -478,7 +477,7 @@ function StepInvites({
         onClick={add}
         className="mt-3 rounded-lg border border-dashed border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 hover:border-brand-400 hover:text-brand-600"
       >
-        + Add another
+        + הוספת עוד
       </button>
     </div>
   );
@@ -502,16 +501,16 @@ function StepDone({
       >
         🎉
       </motion.div>
-      <h2 className="mt-6 text-3xl font-bold text-slate-900">You&apos;re ready!</h2>
+      <h2 className="mt-6 text-3xl font-bold text-slate-900">הכול מוכן!</h2>
       <p className="mx-auto mt-3 max-w-md text-slate-600">
-        Your workspace is set up. Remember — every setting here can be changed
-        later in Settings.
+        סביבת העבודה שלכם מוכנה. זכרו — כל הגדרה כאן ניתנת לשינוי מאוחר יותר
+        בהגדרות.
       </p>
 
       {inviteLinks.length > 0 && (
         <div className="mx-auto mt-6 max-w-md rounded-xl border border-slate-200 bg-white p-4 text-left">
           <p className="text-sm font-medium text-slate-700">
-            Share these invite links with your team:
+            שתפו את קישורי ההזמנה האלה עם הצוות שלכם:
           </p>
           <ul className="mt-2 flex flex-col gap-1">
             {inviteLinks.map((link) => (
@@ -530,7 +529,7 @@ function StepDone({
         onClick={onDone}
         className="mt-8 rounded-lg bg-brand-600 px-8 py-3 font-medium text-white hover:bg-brand-700"
       >
-        Go to my dashboard
+        מעבר ללוח הבקרה שלי
       </button>
     </div>
   );

@@ -48,7 +48,7 @@ export default async function AutomationEditorPage({
       id: m.user_id,
       name:
         (m.profiles as unknown as { full_name: string | null } | null)
-          ?.full_name ?? "Member",
+          ?.full_name ?? "חבר",
     })),
     fields: (fields ?? []).map((f) => ({ key: f.key, label: f.label })),
   };
@@ -60,7 +60,7 @@ export default async function AutomationEditorPage({
           href="/automations"
           className="text-sm text-slate-500 hover:text-slate-800"
         >
-          ← Automations
+          ← אוטומציות
         </Link>
       </div>
       <AutomationEditor

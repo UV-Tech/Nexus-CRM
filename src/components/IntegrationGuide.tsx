@@ -60,18 +60,17 @@ export function IntegrationGuide({
         <span className="text-4xl">{emoji}</span>
         <div>
           <h1 className="text-2xl font-bold text-slate-900">
-            Connect {providerName}
+            חיבור {providerName}
           </h1>
           <p className="text-sm text-slate-500">
-            Step-by-step · about {guide.estMinutes} minutes · everything is
-            changeable later.
+            שלב-אחר-שלב · כ-{guide.estMinutes} דקות · אפשר לשנות הכול בהמשך.
           </p>
         </div>
       </div>
 
       {/* What you'll need */}
       <div className="mt-5 rounded-xl border border-slate-200 bg-white p-4">
-        <p className="text-sm font-semibold text-slate-700">What you&apos;ll need</p>
+        <p className="text-sm font-semibold text-slate-700">מה צריך להכין</p>
         <ul className="mt-2 flex flex-col gap-1 text-sm text-slate-600">
           {guide.needs.map((n) => (
             <li key={n} className="flex items-center gap-2">
@@ -86,9 +85,9 @@ export function IntegrationGuide({
       <div className="mt-6">
         <div className="flex items-center justify-between text-xs font-medium text-slate-400">
           <span>
-            Step {step + 1} of {total}
+            שלב {step + 1} מתוך {total}
           </span>
-          <span>{done.size} done</span>
+          <span>{done.size} הושלמו</span>
         </div>
         <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
           <motion.div
@@ -122,7 +121,7 @@ export function IntegrationGuide({
                   onChange={() => toggleDone(step)}
                   className="h-4 w-4 rounded border-slate-300"
                 />
-                Done
+                הושלם
               </label>
             </div>
 
@@ -141,8 +140,8 @@ export function IntegrationGuide({
             {/* Where to paste */}
             {current.pasteInto && (
               <p className="mt-4 rounded-lg bg-brand-50 px-3 py-2 text-sm text-brand-700">
-                → Paste this into the <strong>{current.pasteInto}</strong> field
-                of the CRM Connect form.
+                ← הדביקו את זה בשדה <strong>{current.pasteInto}</strong> בטופס
+                החיבור של ה-CRM.
               </p>
             )}
 
@@ -174,7 +173,7 @@ export function IntegrationGuide({
                         }
                         className="rounded-lg bg-slate-100 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-200"
                       >
-                        {copied === current.copyValue.label ? "Copied!" : "Copy"}
+                        {copied === current.copyValue.label ? "הועתק!" : "העתקה"}
                       </button>
                     </div>
                   </div>
@@ -204,21 +203,21 @@ export function IntegrationGuide({
           disabled={step === 0}
           className="text-sm font-medium text-slate-500 hover:text-slate-800 disabled:opacity-30"
         >
-          ← Back
+          → חזרה
         </button>
         {isLast ? (
           <Link
             href={values.connectUrl}
             className="rounded-lg bg-brand-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-700"
           >
-            Go to the Connect form →
+            מעבר לטופס החיבור ←
           </Link>
         ) : (
           <button
             onClick={() => go(step + 1)}
             className="rounded-lg bg-brand-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-brand-700"
           >
-            Next step
+            השלב הבא
           </button>
         )}
       </div>
@@ -236,7 +235,7 @@ export function IntegrationGuide({
                   ? "bg-emerald-400"
                   : "bg-slate-300"
             }`}
-            aria-label={`Go to step ${i + 1}`}
+            aria-label={`מעבר לשלב ${i + 1}`}
           />
         ))}
       </div>
@@ -280,7 +279,7 @@ function ConsoleMock({ illustration }: { illustration: Illustration }) {
                 <code className="truncate text-xs text-slate-700">{f.sample}</code>
                 {f.highlight && (
                   <span className="ml-2 shrink-0 rounded-full bg-brand-600 px-2 py-0.5 text-[10px] font-medium text-white">
-                    copy this
+                    העתיקו את זה
                   </span>
                 )}
               </motion.div>

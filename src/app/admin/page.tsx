@@ -35,9 +35,9 @@ export default async function AdminPage({
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold text-slate-900">Businesses</h1>
+      <h1 className="text-2xl font-bold text-slate-900">עסקים</h1>
       <p className="mt-1 text-sm text-slate-500">
-        Provision and oversee every business on the platform.
+        הקמה וניהול של כל עסק בפלטפורמה.
       </p>
 
       {searchParams.error && (
@@ -47,35 +47,35 @@ export default async function AdminPage({
       )}
       {inviteLink && (
         <div className="mt-4 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">
-          <p className="font-medium">Business created. Send this invite link to the owner:</p>
+          <p className="font-medium">העסק נוצר. שלחו את קישור ההזמנה הזה לבעלים:</p>
           <p className="mt-1 break-all font-mono text-xs">{inviteLink}</p>
         </div>
       )}
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Stat label="Businesses" value={String(orgs.length)} />
-        <Stat label="Total members" value={String(totalMembers)} />
-        <Stat label="Total leads" value={String(totalLeads)} />
+        <Stat label="עסקים" value={String(orgs.length)} />
+        <Stat label="סך כל חברי הצוות" value={String(totalMembers)} />
+        <Stat label="סך כל הלידים" value={String(totalLeads)} />
       </div>
 
       {/* Create business */}
       <section className="mt-8 rounded-xl border border-slate-200 bg-white p-6">
-        <h2 className="font-semibold text-slate-900">Add a business</h2>
+        <h2 className="font-semibold text-slate-900">הוספת עסק</h2>
         <form
           action={createBusiness}
           className="mt-4 flex flex-wrap items-end gap-3"
         >
           <label className="flex flex-col gap-1 text-sm">
-            <span className="font-medium text-slate-700">Business name</span>
+            <span className="font-medium text-slate-700">שם העסק</span>
             <input
               name="name"
               required
-              placeholder="Acme Inc."
+              placeholder="חברת ישראל בע״מ"
               className="w-56 rounded-lg border border-slate-300 px-3 py-2"
             />
           </label>
           <label className="flex flex-col gap-1 text-sm">
-            <span className="font-medium text-slate-700">Owner email (optional)</span>
+            <span className="font-medium text-slate-700">אימייל הבעלים (אופציונלי)</span>
             <input
               name="owner_email"
               type="email"
@@ -84,7 +84,7 @@ export default async function AdminPage({
             />
           </label>
           <button className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
-            Create & generate invite
+            יצירה והפקת הזמנה
           </button>
         </form>
       </section>
@@ -94,10 +94,10 @@ export default async function AdminPage({
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
             <tr>
-              <th className="px-5 py-3">Business</th>
-              <th className="px-5 py-3 text-right">Members</th>
-              <th className="px-5 py-3 text-right">Leads</th>
-              <th className="px-5 py-3 text-right">Pending invites</th>
+              <th className="px-5 py-3">עסק</th>
+              <th className="px-5 py-3 text-right">חברי צוות</th>
+              <th className="px-5 py-3 text-right">לידים</th>
+              <th className="px-5 py-3 text-right">הזמנות ממתינות</th>
               <th className="px-5 py-3"></th>
             </tr>
           </thead>
@@ -109,7 +109,7 @@ export default async function AdminPage({
                     {o.name}
                     {o.suspended && (
                       <span className="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
-                        suspended
+                        מושהה
                       </span>
                     )}
                   </p>
@@ -129,7 +129,7 @@ export default async function AdminPage({
                     <form action={openBusiness}>
                       <input type="hidden" name="org_id" value={o.id} />
                       <button className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100">
-                        Open
+                        פתיחה
                       </button>
                     </form>
                     <form action={setSuspended}>
@@ -146,7 +146,7 @@ export default async function AdminPage({
                             : "text-red-600 hover:bg-red-50"
                         }`}
                       >
-                        {o.suspended ? "Reactivate" : "Suspend"}
+                        {o.suspended ? "הפעלה מחדש" : "השהיה"}
                       </button>
                     </form>
                   </div>
@@ -156,7 +156,7 @@ export default async function AdminPage({
             {orgs.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-5 py-10 text-center text-slate-500">
-                  No businesses yet. Create your first one above.
+                  אין עדיין עסקים. צרו את הראשון למעלה.
                 </td>
               </tr>
             )}

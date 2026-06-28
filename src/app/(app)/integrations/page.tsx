@@ -28,9 +28,9 @@ export default async function IntegrationsPage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold text-slate-900">Integrations</h1>
+      <h1 className="text-2xl font-bold text-slate-900">אינטגרציות</h1>
       <p className="mt-1 text-sm text-slate-500">
-        Connect your tools so leads, messages and ad data flow into the CRM.
+        חברו את הכלים שלכם כדי שלידים, הודעות ונתוני פרסום יזרמו ישירות ל-CRM.
       </p>
 
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -57,7 +57,7 @@ export default async function IntegrationsPage() {
                       : "bg-slate-100 text-slate-500"
                   }`}
                 >
-                  {connected ? "Connected" : "Not connected"}
+                  {connected ? "מחובר" : "לא מחובר"}
                 </span>
               </div>
 
@@ -74,7 +74,7 @@ export default async function IntegrationsPage() {
 
               {connected && row?.account_label && (
                 <p className="mt-3 text-xs text-slate-400">
-                  Account: {row.account_label}
+                  חשבון: {row.account_label}
                 </p>
               )}
 
@@ -86,19 +86,19 @@ export default async function IntegrationsPage() {
                         href={p.href}
                         className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
                       >
-                        Open
+                        פתיחה
                       </Link>
                     )}
                     <Link
                       href={`/integrations/${p.key}`}
                       className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
                     >
-                      Settings
+                      הגדרות
                     </Link>
                     <form action={disconnectProvider}>
                       <input type="hidden" name="provider" value={p.key} />
                       <button className="text-sm text-slate-400 hover:text-red-600">
-                        Disconnect
+                        ניתוק
                       </button>
                     </form>
                   </>
@@ -107,14 +107,14 @@ export default async function IntegrationsPage() {
                     href={`/integrations/${p.key}`}
                     className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
                   >
-                    Connect
+                    חיבור
                   </Link>
                 )}
                 <Link
                   href={`/integrations/${p.key}/guide`}
                   className="text-sm font-medium text-brand-600 hover:underline"
                 >
-                  Step-by-step guide →
+                  מדריך שלב-אחר-שלב ←
                 </Link>
               </div>
             </div>

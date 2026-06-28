@@ -87,13 +87,13 @@ export default async function SettingsPage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold text-slate-900">Settings</h1>
+      <h1 className="text-2xl font-bold text-slate-900">הגדרות</h1>
 
       {/* Pipeline stages */}
       <section className="mt-6 rounded-xl border border-slate-200 bg-white p-6">
-        <h2 className="font-semibold text-slate-900">Pipeline stages</h2>
+        <h2 className="font-semibold text-slate-900">שלבי צינור המכירות</h2>
         <p className="text-sm text-slate-500">
-          Customize the stages your leads move through.
+          התאימו את השלבים שהלידים שלכם עוברים דרכם.
         </p>
 
         <ul className="mt-4 flex flex-col gap-2">
@@ -109,17 +109,17 @@ export default async function SettingsPage() {
                 />
                 <span className="font-medium text-slate-800">{s.name}</span>
                 {s.is_won && (
-                  <span className="text-xs text-green-600">won</span>
+                  <span className="text-xs text-green-600">נסגר בהצלחה</span>
                 )}
                 {s.is_lost && (
-                  <span className="text-xs text-red-600">lost</span>
+                  <span className="text-xs text-red-600">אבוד</span>
                 )}
               </span>
               {canManage && (
                 <form action={deleteStage}>
                   <input type="hidden" name="stage_id" value={s.id} />
                   <button className="text-sm text-slate-400 hover:text-red-600">
-                    Remove
+                    הסרה
                   </button>
                 </form>
               )}
@@ -130,16 +130,16 @@ export default async function SettingsPage() {
         {canManage && (
           <form action={addStage} className="mt-4 flex items-end gap-3">
             <label className="flex flex-col gap-1 text-sm">
-              <span className="font-medium text-slate-700">New stage</span>
+              <span className="font-medium text-slate-700">שלב חדש</span>
               <input
                 name="name"
                 required
-                placeholder="e.g. Negotiation"
+                placeholder="למשל משא ומתן"
                 className="rounded-lg border border-slate-300 px-3 py-2"
               />
             </label>
             <label className="flex flex-col gap-1 text-sm">
-              <span className="font-medium text-slate-700">Color</span>
+              <span className="font-medium text-slate-700">צבע</span>
               <input
                 name="color"
                 type="color"
@@ -148,7 +148,7 @@ export default async function SettingsPage() {
               />
             </label>
             <button className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
-              Add stage
+              הוספת שלב
             </button>
           </form>
         )}
@@ -156,9 +156,9 @@ export default async function SettingsPage() {
 
       {/* Custom fields */}
       <section className="mt-6 rounded-xl border border-slate-200 bg-white p-6">
-        <h2 className="font-semibold text-slate-900">Custom lead fields</h2>
+        <h2 className="font-semibold text-slate-900">שדות ליד מותאמים אישית</h2>
         <p className="text-sm text-slate-500">
-          Add fields specific to your business. They appear on every lead form.
+          הוסיפו שדות הייחודיים לעסק שלכם. הם יופיעו בכל טופס ליד.
         </p>
 
         <ul className="mt-4 flex flex-col gap-2">
@@ -182,14 +182,14 @@ export default async function SettingsPage() {
                 <form action={deleteCustomField}>
                   <input type="hidden" name="field_id" value={f.id} />
                   <button className="text-sm text-slate-400 hover:text-red-600">
-                    Remove
+                    הסרה
                   </button>
                 </form>
               )}
             </li>
           ))}
           {allCustomFields.length === 0 && (
-            <li className="text-sm text-slate-500">No custom fields yet.</li>
+            <li className="text-sm text-slate-500">אין עדיין שדות מותאמים אישית.</li>
           )}
         </ul>
 
@@ -199,40 +199,40 @@ export default async function SettingsPage() {
             className="mt-4 flex flex-wrap items-end gap-3"
           >
             <label className="flex flex-col gap-1 text-sm">
-              <span className="font-medium text-slate-700">Field label</span>
+              <span className="font-medium text-slate-700">תווית השדה</span>
               <input
                 name="label"
                 required
-                placeholder="e.g. Budget"
+                placeholder="למשל תקציב"
                 className="rounded-lg border border-slate-300 px-3 py-2"
               />
             </label>
             <label className="flex flex-col gap-1 text-sm">
-              <span className="font-medium text-slate-700">Type</span>
+              <span className="font-medium text-slate-700">סוג</span>
               <select
                 name="field_type"
                 defaultValue="text"
                 className="rounded-lg border border-slate-300 px-3 py-2"
               >
-                <option value="text">Text</option>
-                <option value="number">Number</option>
-                <option value="date">Date</option>
-                <option value="select">Dropdown</option>
-                <option value="checkbox">Checkbox</option>
+                <option value="text">טקסט</option>
+                <option value="number">מספר</option>
+                <option value="date">תאריך</option>
+                <option value="select">רשימה נפתחת</option>
+                <option value="checkbox">תיבת סימון</option>
               </select>
             </label>
             <label className="flex flex-col gap-1 text-sm">
               <span className="font-medium text-slate-700">
-                Options (for dropdown)
+                אפשרויות (לרשימה נפתחת)
               </span>
               <input
                 name="options"
-                placeholder="comma,separated,values"
+                placeholder="ערכים,מופרדים,בפסיקים"
                 className="rounded-lg border border-slate-300 px-3 py-2"
               />
             </label>
             <button className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
-              Add field
+              הוספת שדה
             </button>
           </form>
         )}
@@ -240,37 +240,37 @@ export default async function SettingsPage() {
 
       {/* Lead intake / channels */}
       <section className="mt-6 rounded-xl border border-slate-200 bg-white p-6">
-        <h2 className="font-semibold text-slate-900">Lead intake webhook</h2>
+        <h2 className="font-semibold text-slate-900">Webhook לקליטת לידים</h2>
         <p className="text-sm text-slate-500">
-          Send leads from Facebook Lead Ads, Instagram, WhatsApp or any tool
-          (Zapier/Make) to this URL. POST JSON with <code>name</code>,{" "}
+          שלחו לידים מ-Facebook Lead Ads, Instagram, WhatsApp או כל כלי אחר
+          (Zapier/Make) לכתובת זו. שלחו בקשת POST עם JSON הכולל <code>name</code>,{" "}
           <code>email</code>, <code>phone</code>, <code>company</code>,{" "}
-          <code>source</code> and optional <code>custom</code> fields.
+          <code>source</code> ושדות <code>custom</code> אופציונליים.
         </p>
         <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-900 px-4 py-3 text-xs text-slate-100">
           {webhookUrl}
         </pre>
 
         <p className="mt-4 text-sm text-slate-500">
-          Optional: sign requests with HMAC-SHA256 of the raw body using the
-          secret below and send it in the <code>x-signature</code> header
-          (hex, optional <code>sha256=</code> prefix). Unsigned requests are
-          still accepted.
+          אופציונלי: חתמו על הבקשות באמצעות HMAC-SHA256 של גוף הבקשה הגולמי
+          בעזרת הסוד שלהלן, ושלחו אותו בכותרת <code>x-signature</code>
+          (בפורמט hex, עם תחילית <code>sha256=</code> אופציונלית). בקשות ללא
+          חתימה עדיין מתקבלות.
         </p>
         <pre className="mt-2 overflow-x-auto rounded-lg bg-slate-100 px-4 py-3 text-xs text-slate-700">
-          {organization.webhook_secret ?? "(run migration 0005 to enable)"}
+          {organization.webhook_secret ?? "(הריצו את מיגרציה 0005 כדי להפעיל)"}
         </pre>
 
         {canManage && (
           <div className="mt-3 flex gap-4">
             <form action={regenerateIntakeToken}>
               <button className="text-sm text-slate-500 hover:text-red-600">
-                Regenerate token
+                יצירת אסימון מחדש
               </button>
             </form>
             <form action={regenerateWebhookSecret}>
               <button className="text-sm text-slate-500 hover:text-red-600">
-                Regenerate signing secret
+                יצירת סוד חתימה מחדש
               </button>
             </form>
           </div>
@@ -279,9 +279,9 @@ export default async function SettingsPage() {
 
       {/* Audit log */}
       <section className="mt-6 rounded-xl border border-slate-200 bg-white p-6">
-        <h2 className="font-semibold text-slate-900">Activity log</h2>
+        <h2 className="font-semibold text-slate-900">יומן פעילות</h2>
         <p className="text-sm text-slate-500">
-          Recent actions in this workspace, including platform-admin access.
+          פעולות אחרונות במרחב העבודה הזה, כולל גישת מנהל הפלטפורמה.
         </p>
         <ul className="mt-4 flex flex-col gap-2">
           {auditEntries.map((a) => (
@@ -299,14 +299,14 @@ export default async function SettingsPage() {
             </li>
           ))}
           {auditEntries.length === 0 && (
-            <li className="text-sm text-slate-500">No activity recorded yet.</li>
+            <li className="text-sm text-slate-500">לא נרשמה עדיין פעילות.</li>
           )}
         </ul>
       </section>
 
       {/* Team */}
       <section className="mt-6 rounded-xl border border-slate-200 bg-white p-6">
-        <h2 className="font-semibold text-slate-900">Team</h2>
+        <h2 className="font-semibold text-slate-900">חברי צוות</h2>
         <ul className="mt-4 flex flex-col gap-2">
           {allMembers.map((m) => (
             <li
@@ -314,7 +314,7 @@ export default async function SettingsPage() {
               className="flex items-center justify-between rounded-lg border border-slate-100 px-3 py-2"
             >
               <span className="text-slate-800">
-                {m.profiles?.full_name ?? "Member"}
+                {m.profiles?.full_name ?? "חבר צוות"}
               </span>
               <span className="text-xs uppercase tracking-wide text-slate-400">
                 {m.role}
@@ -330,7 +330,7 @@ export default async function SettingsPage() {
             >
               <label className="flex flex-col gap-1 text-sm">
                 <span className="font-medium text-slate-700">
-                  Invite teammate (email optional)
+                  הזמנת חבר צוות (אימייל אופציונלי)
                 </span>
                 <input
                   name="email"
@@ -340,18 +340,18 @@ export default async function SettingsPage() {
                 />
               </label>
               <label className="flex flex-col gap-1 text-sm">
-                <span className="font-medium text-slate-700">Role</span>
+                <span className="font-medium text-slate-700">תפקיד</span>
                 <select
                   name="role"
                   defaultValue="agent"
                   className="rounded-lg border border-slate-300 px-3 py-2"
                 >
-                  <option value="agent">Agent</option>
-                  <option value="admin">Admin</option>
+                  <option value="agent">נציג</option>
+                  <option value="admin">מנהל</option>
                 </select>
               </label>
               <button className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
-                Create invite link
+                יצירת קישור הזמנה
               </button>
             </form>
 
@@ -364,7 +364,7 @@ export default async function SettingsPage() {
                   >
                     <div className="min-w-0">
                       <p className="text-sm text-slate-700">
-                        {inv.email || "Open invite"} ·{" "}
+                        {inv.email || "הזמנה פתוחה"} ·{" "}
                         <span className="text-slate-400">{inv.role}</span>
                       </p>
                       <p className="truncate font-mono text-xs text-slate-400">
@@ -375,7 +375,7 @@ export default async function SettingsPage() {
                     <form action={deleteInvitation}>
                       <input type="hidden" name="invitation_id" value={inv.id} />
                       <button className="shrink-0 text-sm text-slate-400 hover:text-red-600">
-                        Revoke
+                        ביטול
                       </button>
                     </form>
                   </li>
@@ -385,8 +385,8 @@ export default async function SettingsPage() {
           </>
         )}
         <p className="mt-3 text-xs text-slate-400">
-          Share an invite link with a teammate. They sign in and join this
-          organization with the role you chose.
+          שתפו קישור הזמנה עם חבר צוות. הוא יתחבר ויצטרף לארגון זה עם התפקיד
+          שבחרתם.
         </p>
       </section>
     </div>

@@ -38,7 +38,7 @@ export default async function IntegrationGuidePage({
         href="/integrations"
         className="text-sm text-slate-500 hover:text-slate-800"
       >
-        ← Integrations
+        → אינטגרציות
       </Link>
       <div className="mt-4">
         <IntegrationGuide

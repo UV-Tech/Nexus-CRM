@@ -4,15 +4,21 @@ import { signOut } from "@/app/login/actions";
 import { switchOrg } from "./actions";
 
 const NAV = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/leads", label: "Leads" },
-  { href: "/pipeline", label: "Pipeline" },
-  { href: "/inbox", label: "Inbox" },
-  { href: "/automations", label: "Automations" },
-  { href: "/integrations", label: "Integrations" },
-  { href: "/reports", label: "Reports" },
-  { href: "/settings", label: "Settings" },
+  { href: "/dashboard", label: "לוח בקרה" },
+  { href: "/leads", label: "לידים" },
+  { href: "/pipeline", label: "צינור מכירות" },
+  { href: "/inbox", label: "תיבת הודעות" },
+  { href: "/automations", label: "אוטומציות" },
+  { href: "/integrations", label: "אינטגרציות" },
+  { href: "/reports", label: "דוחות" },
+  { href: "/settings", label: "הגדרות" },
 ];
+
+const ROLE_LABELS: Record<string, string> = {
+  owner: "בעלים",
+  admin: "מנהל",
+  agent: "נציג",
+};
 
 export default async function AppLayout({
   children,
@@ -43,7 +49,7 @@ export default async function AppLayout({
                 ))}
               </select>
               <button className="mt-1 text-xs text-brand-600 hover:underline">
-                Switch
+                החלפה
               </button>
             </form>
           ) : (
@@ -69,15 +75,15 @@ export default async function AppLayout({
               href="/admin"
               className="mb-1 block rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700"
             >
-              ← Platform admin
+              ← ניהול פלטפורמה
             </Link>
           )}
           <p className="px-3 pb-2 text-xs uppercase tracking-wide text-slate-400">
-            {role}
+            {ROLE_LABELS[role] ?? role}
           </p>
           <form action={signOut}>
             <button className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 hover:bg-slate-100">
-              Sign out
+              התנתקות
             </button>
           </form>
         </div>

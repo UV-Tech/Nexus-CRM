@@ -83,7 +83,7 @@ export default async function InboxPage({
     <div className="flex h-screen flex-col">
       <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3">
         <div className="flex items-center gap-3">
-          <h1 className="text-lg font-bold text-slate-900">💬 WhatsApp inbox</h1>
+          <h1 className="text-lg font-bold text-slate-900">💬 תיבת הודעות WhatsApp</h1>
           <span
             className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
               connected
@@ -91,16 +91,16 @@ export default async function InboxPage({
                 : "bg-amber-100 text-amber-700"
             }`}
           >
-            {connected ? "Connected" : "Not connected"}
+            {connected ? "מחובר" : "לא מחובר"}
           </span>
         </div>
         <div className="flex items-center gap-3 text-sm">
           <Link href="/inbox/templates" className="text-slate-600 hover:text-slate-900">
-            Templates
+            תבניות
           </Link>
           {!connected && (
             <Link href="/integrations/whatsapp" className="text-brand-600">
-              Connect WhatsApp
+              חיבור WhatsApp
             </Link>
           )}
         </div>
@@ -114,21 +114,21 @@ export default async function InboxPage({
             className="flex flex-col gap-2 border-b border-slate-100 p-3"
           >
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              New conversation
+              שיחה חדשה
             </p>
             <input
               name="phone"
               required
-              placeholder="Phone (+1555…)"
+              placeholder="טלפון (‎+1555…)"
               className="rounded-lg border border-slate-300 px-2.5 py-1.5 text-sm"
             />
             <input
               name="name"
-              placeholder="Name (optional)"
+              placeholder="שם (אופציונלי)"
               className="rounded-lg border border-slate-300 px-2.5 py-1.5 text-sm"
             />
             <button className="rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-700">
-              Start
+              התחלה
             </button>
           </form>
 
@@ -156,7 +156,7 @@ export default async function InboxPage({
             ))}
             {conversations.length === 0 && (
               <p className="px-4 py-8 text-center text-sm text-slate-400">
-                No conversations yet.
+                אין שיחות עדיין.
               </p>
             )}
           </div>
@@ -196,7 +196,7 @@ export default async function InboxPage({
                 ))}
                 {messages.length === 0 && (
                   <p className="m-auto text-sm text-slate-400">
-                    No messages yet. Say hello 👋
+                    אין הודעות עדיין. שלחו שלום 👋
                   </p>
                 )}
               </div>
@@ -209,7 +209,7 @@ export default async function InboxPage({
           ) : (
             <div className="flex flex-1 items-center justify-center">
               <p className="text-sm text-slate-400">
-                Select or start a conversation.
+                בחרו שיחה או התחילו שיחה חדשה.
               </p>
             </div>
           )}

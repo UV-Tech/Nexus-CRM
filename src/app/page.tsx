@@ -17,22 +17,21 @@ export default async function Home() {
           Nexus <span className="text-brand-600">CRM</span>
         </h1>
         <p className="mt-6 text-lg text-slate-600">
-          A flexible, multi-tenant CRM. Onboard your clients, capture leads from
-          Facebook, Instagram and WhatsApp, and move them through a pipeline you
-          control.
+          CRM גמיש ורב-ארגוני. קלטו את הלקוחות שלכם, אספו לידים מ-Facebook,
+          Instagram ו-WhatsApp, והעבירו אותם דרך צינור מכירות שאתם שולטים בו.
         </p>
         <div className="mt-10 flex items-center justify-center gap-4">
           <Link
             href="/login"
             className="rounded-lg bg-brand-600 px-6 py-3 font-medium text-white hover:bg-brand-700"
           >
-            Get started
+            התחילו עכשיו
           </Link>
           <Link
             href="/login"
             className="rounded-lg border border-slate-300 px-6 py-3 font-medium text-slate-700 hover:bg-slate-100"
           >
-            Sign in
+            התחברות
           </Link>
         </div>
       </div>

@@ -33,7 +33,7 @@ export default async function ConnectProviderPage({
         href="/integrations"
         className="text-sm text-slate-500 hover:text-slate-800"
       >
-        ← Integrations
+        → אינטגרציות
       </Link>
 
       <div className="mt-3 flex items-center gap-3">
@@ -48,20 +48,20 @@ export default async function ConnectProviderPage({
         href={`/integrations/${spec.key}/guide`}
         className="mt-4 inline-flex items-center gap-2 rounded-lg border border-brand-200 bg-brand-50 px-4 py-2 text-sm font-medium text-brand-700 hover:bg-brand-100"
       >
-        📖 Not sure where to find these? Open the step-by-step guide →
+        📖 לא בטוחים איפה למצוא את הפרטים האלה? פתחו את המדריך שלב-אחר-שלב ←
       </Link>
 
       <div className="mt-6 max-w-xl rounded-xl border border-slate-200 bg-white p-6">
         {oauthConfigured ? (
           <p className="mb-4 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
-            One-click OAuth is configured for this provider. (Connecting via the
-            vendor&apos;s consent screen.)
+            התחברות OAuth בלחיצה אחת מוגדרת עבור ספק זה. (החיבור מתבצע דרך מסך
+            ההרשאות של הספק.)
           </p>
         ) : (
           <p className="mb-4 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            One-click OAuth isn&apos;t configured yet (needs a registered{" "}
-            {spec.name} app + approval). For now, paste credentials below to
-            connect manually — everything else works the same.
+            התחברות OAuth בלחיצה אחת עדיין לא מוגדרת (נדרשת אפליקציית{" "}
+            {spec.name} רשומה + אישור). בינתיים, הדביקו את פרטי ההתחברות למטה כדי
+            להתחבר באופן ידני — כל השאר עובד בדיוק אותו הדבר.
           </p>
         )}
 
@@ -69,12 +69,12 @@ export default async function ConnectProviderPage({
           <input type="hidden" name="provider" value={spec.key} />
           <label className="flex flex-col gap-1.5 text-sm">
             <span className="font-medium text-slate-700">
-              Account label (optional)
+              תווית חשבון (אופציונלי)
             </span>
             <input
               name="account_label"
               defaultValue={row?.account_label ?? ""}
-              placeholder="e.g. Acme main account"
+              placeholder="לדוגמה: החשבון הראשי של אקמה"
               className="rounded-lg border border-slate-300 px-3 py-2"
             />
           </label>
@@ -93,18 +93,18 @@ export default async function ConnectProviderPage({
           ))}
 
           <button className="self-start rounded-lg bg-brand-600 px-5 py-2.5 font-medium text-white hover:bg-brand-700">
-            {row?.status === "connected" ? "Update connection" : "Connect"}
+            {row?.status === "connected" ? "עדכון חיבור" : "חיבור"}
           </button>
         </form>
       </div>
 
       {spec.key === "whatsapp" && (
         <p className="mt-4 text-sm text-slate-500">
-          After connecting, open the{" "}
+          לאחר החיבור, פתחו את{" "}
           <Link href="/inbox" className="text-brand-600">
-            WhatsApp inbox
+            תיבת ההודעות של WhatsApp
           </Link>{" "}
-          to message your leads.
+          כדי לשלוח הודעות ללידים שלכם.
         </p>
       )}
     </div>

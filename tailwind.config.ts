@@ -7,6 +7,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-rubik)", "system-ui", "-apple-system", "Segoe UI", "Arial", "sans-serif"],
+      },
       colors: {
         brand: {
           50: "#eef2ff",

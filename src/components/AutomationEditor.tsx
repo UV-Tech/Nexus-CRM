@@ -39,6 +39,14 @@ const CATEGORY_STYLES: Record<string, string> = {
   action: "border-emerald-400 bg-emerald-50",
 };
 
+// Hebrew display labels for node categories. The keys are the internal
+// category type values (must stay English) — only the labels are translated.
+const CATEGORY_LABELS: Record<"trigger" | "condition" | "action", string> = {
+  trigger: "טריגרים",
+  condition: "תנאים",
+  action: "פעולות",
+};
+
 function CrmNode({ data, selected }: NodeProps) {
   const specType = (data as { specType: string }).specType;
   const spec = SPEC_BY_TYPE[specType];
@@ -59,7 +67,7 @@ function CrmNode({ data, selected }: NodeProps) {
       </div>
       <p className="mt-0.5 text-[10px] uppercase tracking-wide text-slate-400">
         {spec.category}
-        {spec.pendingIntegration ? " · needs integration" : ""}
+        {spec.pendingIntegration ? " · דורש אינטגרציה" : ""}
       </p>
       <Handle type="source" position={Position.Right} />
     </div>
@@ -180,12 +188,12 @@ function EditorInner({
       {/* Palette */}
       <aside className="w-56 shrink-0 overflow-y-auto border-r border-slate-200 bg-white p-3">
         <p className="px-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
-          Add a block
+          הוספת בלוק
         </p>
         {(["trigger", "condition", "action"] as const).map((cat) => (
           <div key={cat} className="mt-3">
             <p className="px-1 text-xs font-medium capitalize text-slate-500">
-              {cat}s
+              {CATEGORY_LABELS[cat]}
             </p>
             <div className="mt-1 flex flex-col gap-1">
               {specsByCategory(cat).map((spec) => (
@@ -217,7 +225,7 @@ function EditorInner({
             disabled={saving}
             className="rounded-lg bg-brand-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-60"
           >
-            {saving ? "Saving…" : "Save"}
+            {saving ? "שומר…" : "שמירה"}
           </button>
           <form action={toggleAutomation}>
             <input type="hidden" name="automation_id" value={automation.id} />
@@ -228,11 +236,11 @@ function EditorInner({
                 enabled ? "bg-green-100 text-green-700" : "bg-slate-100 text-slate-500"
               }`}
             >
-              {enabled ? "On" : "Off"}
+              {enabled ? "פעיל" : "כבוי"}
             </button>
           </form>
           {savedAt && (
-            <span className="text-xs text-slate-400">saved {savedAt}</span>
+            <span className="text-xs text-slate-400">נשמר {savedAt}</span>
           )}
         </div>
 
@@ -254,7 +262,7 @@ function EditorInner({
         {nodes.length === 0 && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <p className="text-sm text-slate-400">
-              Add a trigger from the left to start your flow.
+              הוסיפו טריגר מהצד כדי להתחיל את התהליך.
             </p>
           </div>
         )}
@@ -271,14 +279,14 @@ function EditorInner({
               onClick={() => removeNode(selected.id)}
               className="text-xs text-slate-400 hover:text-red-600"
             >
-              Remove
+              הסרה
             </button>
           </div>
           <p className="mt-1 text-xs text-slate-500">{selectedSpec.description}</p>
 
           <div className="mt-4 flex flex-col gap-3">
             {selectedSpec.config.length === 0 && (
-              <p className="text-sm text-slate-400">No settings for this block.</p>
+              <p className="text-sm text-slate-400">אין הגדרות לבלוק הזה.</p>
             )}
             {selectedSpec.config.map((field) => (
               <ConfigInput
@@ -297,7 +305,7 @@ function EditorInner({
 
           {selectedSpec.pendingIntegration && (
             <p className="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
-              This action will run once its channel is connected in Integrations.
+              הפעולה הזו תרוץ ברגע שהערוץ שלה יחובר במסך האינטגרציות.
             </p>
           )}
         </aside>
@@ -357,7 +365,7 @@ function ConfigInput({
   } else if (field.type === "stage") {
     control = (
       <select value={value} onChange={(e) => onChange(e.target.value)} className={cls}>
-        <option value="">Any / pick…</option>
+        <option value="">כל שלב / בחרו…</option>
         {options.stages.map((s) => (
           <option key={s.id} value={s.id}>
             {s.name}
@@ -368,7 +376,7 @@ function ConfigInput({
   } else if (field.type === "member") {
     control = (
       <select value={value} onChange={(e) => onChange(e.target.value)} className={cls}>
-        <option value="">Unassigned</option>
+        <option value="">לא משויך</option>
         {options.members.map((m) => (
           <option key={m.id} value={m.id}>
             {m.name}
@@ -379,7 +387,7 @@ function ConfigInput({
   } else if (field.type === "field") {
     control = (
       <select value={value} onChange={(e) => onChange(e.target.value)} className={cls}>
-        <option value="">Pick a field…</option>
+        <option value="">בחרו שדה…</option>
         {options.fields.map((f) => (
           <option key={f.key} value={f.key}>
             {f.label}

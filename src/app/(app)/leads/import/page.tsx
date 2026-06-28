@@ -9,15 +9,15 @@ export default function ImportLeadsPage({
   return (
     <div className="p-8">
       <Link href="/leads" className="text-sm text-slate-500 hover:text-slate-800">
-        ← Back to leads
+        ← חזרה ללידים
       </Link>
-      <h1 className="mt-3 text-2xl font-bold text-slate-900">Import leads</h1>
+      <h1 className="mt-3 text-2xl font-bold text-slate-900">ייבוא לידים</h1>
       <p className="mt-1 text-sm text-slate-500">
-        Upload a CSV file or paste CSV text. The first row must be a header.
-        Recognized columns: <code>name</code>, <code>email</code>,{" "}
+        העלו קובץ CSV או הדביקו טקסט CSV. השורה הראשונה חייבת להיות שורת כותרות.
+        עמודות מזוהות: <code>name</code>, <code>email</code>,{" "}
         <code>phone</code>, <code>company</code>, <code>source</code>,{" "}
-        <code>value</code>, <code>notes</code>. Any other column is stored as
-        custom data.
+        <code>value</code>, <code>notes</code>. כל עמודה אחרת נשמרת כשדה מותאם
+        אישית.
       </p>
 
       {searchParams.error && (
@@ -31,7 +31,7 @@ export default function ImportLeadsPage({
         className="mt-6 flex max-w-2xl flex-col gap-4 rounded-xl border border-slate-200 bg-white p-6"
       >
         <label className="flex flex-col gap-1.5 text-sm">
-          <span className="font-medium text-slate-700">CSV file</span>
+          <span className="font-medium text-slate-700">קובץ CSV</span>
           <input
             type="file"
             name="file"
@@ -41,11 +41,11 @@ export default function ImportLeadsPage({
         </label>
 
         <div className="text-center text-xs uppercase tracking-wide text-slate-400">
-          or paste
+          או הדביקו
         </div>
 
         <label className="flex flex-col gap-1.5 text-sm">
-          <span className="font-medium text-slate-700">CSV text</span>
+          <span className="font-medium text-slate-700">טקסט CSV</span>
           <textarea
             name="csv"
             rows={8}
@@ -55,7 +55,7 @@ export default function ImportLeadsPage({
         </label>
 
         <button className="self-start rounded-lg bg-brand-600 px-5 py-2.5 font-medium text-white hover:bg-brand-700">
-          Import
+          ייבוא
         </button>
       </form>
     </div>

@@ -13,12 +13,12 @@ export default function LoginPage({
     <main className="flex min-h-screen items-center justify-center px-6">
       <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900">
-          {isSignup ? "Create your account" : "Sign in to Nexus CRM"}
+          {isSignup ? "יצירת חשבון" : "התחברות ל-Nexus CRM"}
         </h1>
         <p className="mt-2 text-sm text-slate-500">
           {isSignup
-            ? "Create an account to accept your invitation."
-            : "Welcome back. Enter your details to continue."}
+            ? "צרו חשבון כדי לקבל את ההזמנה שלכם."
+            : "ברוכים השבים. הזינו את הפרטים שלכם כדי להמשיך."}
         </p>
 
         {searchParams.error && (
@@ -28,7 +28,7 @@ export default function LoginPage({
         )}
         {searchParams.confirm && (
           <p className="mt-4 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
-            Check your inbox to confirm your email, then sign in.
+            בדקו את תיבת הדואר שלכם כדי לאשר את האימייל, ולאחר מכן התחברו.
           </p>
         )}
 
@@ -38,38 +38,38 @@ export default function LoginPage({
         >
           <input type="hidden" name="next" value={next} />
           {isSignup && (
-            <Field label="Full name" name="full_name" type="text" required />
+            <Field label="שם מלא" name="full_name" type="text" required />
           )}
-          <Field label="Email" name="email" type="email" required />
-          <Field label="Password" name="password" type="password" required />
+          <Field label="אימייל" name="email" type="email" required />
+          <Field label="סיסמה" name="password" type="password" required />
 
           <button
             type="submit"
             className="mt-2 rounded-lg bg-brand-600 px-4 py-2.5 font-medium text-white hover:bg-brand-700"
           >
-            {isSignup ? "Create workspace" : "Sign in"}
+            {isSignup ? "יצירת סביבת עבודה" : "התחברות"}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-slate-500">
           {isSignup ? (
             <>
-              Already have an account?{" "}
+              כבר יש לכם חשבון?{" "}
               <Link
                 href={`/login?next=${encodeURIComponent(next)}`}
                 className="font-medium text-brand-600"
               >
-                Sign in
+                התחברות
               </Link>
             </>
           ) : (
             <>
-              New here?{" "}
+              חדשים כאן?{" "}
               <Link
                 href={`/login?mode=signup&next=${encodeURIComponent(next)}`}
                 className="font-medium text-brand-600"
               >
-                Create a workspace
+                יצירת סביבת עבודה
               </Link>
             </>
           )}

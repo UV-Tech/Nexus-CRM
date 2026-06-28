@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
+import { Rubik } from "next/font/google";
 import "./globals.css";
+
+const rubik = Rubik({
+  subsets: ["hebrew", "latin"],
+  variable: "--font-rubik",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Nexus CRM",
-  description: "Multi-tenant lead management for Facebook, Instagram, WhatsApp and more",
+  description: "ניהול לידים רב-לקוחי ל-Facebook, Instagram, WhatsApp ועוד",
 };
 
 export default function RootLayout({
@@ -12,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen">{children}</body>
+    <html lang="he" dir="rtl" className={rubik.variable}>
+      <body className="min-h-screen font-sans antialiased">{children}</body>
     </html>
   );
 }

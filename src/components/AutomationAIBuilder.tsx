@@ -8,9 +8,9 @@ import { SPEC_BY_TYPE } from "@/lib/automations/catalog";
 import { createAutomationFromGraph } from "@/app/(app)/automations/actions";
 
 const EXAMPLES = [
-  "When a new lead comes from Facebook, assign it to me and send a WhatsApp message",
-  "When a lead value is over 5000, notify the team and move to Qualified",
-  "When a lead is marked Won, add a note and send a thank-you email",
+  "כאשר מגיע ליד חדש מפייסבוק, שייכו אותו אליי ושלחו הודעת WhatsApp",
+  "כאשר ערך הליד מעל 5000, שלחו התראה לצוות והעבירו לשלב מוסמך",
+  "כאשר ליד מסומן כזכייה, הוסיפו הערה ושלחו אימייל תודה",
 ];
 
 export function AutomationAIBuilder() {
@@ -42,7 +42,7 @@ export function AutomationAIBuilder() {
         onClick={() => setOpen(true)}
         className="rounded-lg bg-gradient-to-r from-brand-600 to-fuchsia-600 px-4 py-2 text-sm font-medium text-white hover:opacity-90"
       >
-        ✨ Build with our agent
+        ✨ בנייה עם הסוכן שלנו
       </button>
 
       <AnimatePresence>
@@ -62,18 +62,18 @@ export function AutomationAIBuilder() {
               className="w-full max-w-xl rounded-2xl bg-white p-6 shadow-xl"
             >
               <h2 className="text-lg font-bold text-slate-900">
-                ✨ Describe your automation
+                ✨ תארו את האוטומציה שלכם
               </h2>
               <p className="mt-1 text-sm text-slate-500">
-                Tell us what should happen in plain words — we&apos;ll build the
-                flow. You can refine everything on the canvas afterwards.
+                ספרו לנו במילים פשוטות מה צריך לקרות — אנחנו נבנה את התהליך. תוכלו
+                לחדד הכל על הקנבס לאחר מכן.
               </p>
 
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 rows={3}
-                placeholder="e.g. When a new WhatsApp lead arrives, assign to me and send a welcome message"
+                placeholder="לדוגמה: כאשר מגיע ליד חדש ב-WhatsApp, שייכו אותו אליי ושלחו הודעת ברוכים הבאים"
                 className="mt-4 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
               />
 
@@ -94,7 +94,7 @@ export function AutomationAIBuilder() {
                   onClick={generate}
                   className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
                 >
-                  Generate
+                  יצירה
                 </button>
               </div>
 
@@ -129,7 +129,7 @@ export function AutomationAIBuilder() {
                     disabled={creating}
                     className="mt-4 rounded-lg bg-brand-600 px-5 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-60"
                   >
-                    {creating ? "Creating…" : "Create & open in editor"}
+                    {creating ? "יוצר…" : "יצירה ופתיחה בעורך"}
                   </button>
                 </motion.div>
               )}

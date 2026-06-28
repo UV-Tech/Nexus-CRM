@@ -27,9 +27,9 @@ export default async function PipelinePage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold text-slate-900">Pipeline</h1>
+      <h1 className="text-2xl font-bold text-slate-900">צינור מכירות</h1>
       <p className="mt-1 text-sm text-slate-500">
-        Drag leads between stages. Manage stages in Settings.
+        גררו לידים בין השלבים. ניהול השלבים מתבצע בהגדרות.
       </p>
 
       <KanbanBoard

@@ -37,24 +37,24 @@ export default async function DashboardPage() {
   return (
     <div className="p-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-slate-900">לוח בקרה</h1>
         <Link
           href="/leads?new=1"
           className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
         >
-          + New lead
+          + ליד חדש
         </Link>
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Total leads" value={String(allLeads.length)} />
-        <Stat label="Open leads" value={String(openLeads.length)} />
-        <Stat label="Open pipeline value" value={fmtMoney(openValue)} />
-        <Stat label="Won value" value={fmtMoney(wonValue)} accent />
+        <Stat label="סך הכל לידים" value={String(allLeads.length)} />
+        <Stat label="לידים פתוחים" value={String(openLeads.length)} />
+        <Stat label="ערך צינור מכירות פתוח" value={fmtMoney(openValue)} />
+        <Stat label="ערך עסקאות שנסגרו" value={fmtMoney(wonValue)} accent />
       </div>
 
       <h2 className="mt-10 text-lg font-semibold text-slate-900">
-        Recent leads
+        לידים אחרונים
       </h2>
       <div className="mt-3 overflow-hidden rounded-xl border border-slate-200 bg-white">
         {allLeads.slice(0, 8).map((lead) => {
@@ -89,7 +89,7 @@ export default async function DashboardPage() {
         })}
         {allLeads.length === 0 && (
           <p className="px-5 py-8 text-center text-sm text-slate-500">
-            No leads yet. Create your first one or connect a channel in Settings.
+            עדיין אין לידים. צרו את הליד הראשון או חברו ערוץ דרך ההגדרות.
           </p>
         )}
       </div>

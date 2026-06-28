@@ -64,33 +64,33 @@ export default async function LeadsPage({
   return (
     <div className="p-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900">Leads</h1>
+        <h1 className="text-2xl font-bold text-slate-900">לידים</h1>
         <div className="flex items-center gap-2">
           <Link
             href="/leads/export"
             className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
           >
-            Export CSV
+            ייצוא CSV
           </Link>
           <Link
             href="/leads/import"
             className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
           >
-            Import CSV
+            ייבוא CSV
           </Link>
           {showForm ? (
             <Link
               href="/leads"
               className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
             >
-              Cancel
+              ביטול
             </Link>
           ) : (
             <Link
               href="/leads?new=1"
               className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
             >
-              + New lead
+              + ליד חדש
             </Link>
           )}
         </div>
@@ -103,7 +103,7 @@ export default async function LeadsPage({
       )}
       {searchParams.imported && (
         <p className="mt-4 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
-          Imported {searchParams.imported} lead(s).
+          יובאו {searchParams.imported} לידים.
         </p>
       )}
 
@@ -112,18 +112,18 @@ export default async function LeadsPage({
           action={createLead}
           className="mt-6 grid grid-cols-1 gap-4 rounded-xl border border-slate-200 bg-white p-6 sm:grid-cols-2"
         >
-          <Input label="Name" name="name" required />
-          <Input label="Company" name="company" />
-          <Input label="Email" name="email" type="email" />
-          <Input label="Phone" name="phone" />
+          <Input label="שם" name="name" required />
+          <Input label="חברה" name="company" />
+          <Input label="אימייל" name="email" type="email" />
+          <Input label="טלפון" name="phone" />
           <label className="flex flex-col gap-1.5 text-sm">
-            <span className="font-medium text-slate-700">Source</span>
+            <span className="font-medium text-slate-700">מקור</span>
             <select
               name="source"
               className="rounded-lg border border-slate-300 px-3 py-2"
               defaultValue="manual"
             >
-              <option value="manual">Manual</option>
+              <option value="manual">ידני</option>
               <option value="facebook">Facebook</option>
               <option value="instagram">Instagram</option>
               <option value="whatsapp">WhatsApp</option>
@@ -131,7 +131,7 @@ export default async function LeadsPage({
             </select>
           </label>
           <label className="flex flex-col gap-1.5 text-sm">
-            <span className="font-medium text-slate-700">Stage</span>
+            <span className="font-medium text-slate-700">שלב</span>
             <select
               name="stage_id"
               className="rounded-lg border border-slate-300 px-3 py-2"
@@ -144,11 +144,11 @@ export default async function LeadsPage({
               ))}
             </select>
           </label>
-          <Input label="Estimated value" name="value" type="number" />
+          <Input label="ערך משוער" name="value" type="number" />
           <CustomFieldInputs fields={customFields} />
           <div className="sm:col-span-2">
             <label className="flex flex-col gap-1.5 text-sm">
-              <span className="font-medium text-slate-700">Notes</span>
+              <span className="font-medium text-slate-700">הערות</span>
               <textarea
                 name="notes"
                 rows={3}
@@ -158,7 +158,7 @@ export default async function LeadsPage({
           </div>
           <div className="sm:col-span-2">
             <button className="rounded-lg bg-brand-600 px-5 py-2.5 font-medium text-white hover:bg-brand-700">
-              Save lead
+              שמירת ליד
             </button>
           </div>
         </form>
@@ -167,22 +167,22 @@ export default async function LeadsPage({
       {/* Search & filters */}
       <form className="mt-6 flex flex-wrap items-end gap-3">
         <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium text-slate-700">Search</span>
+          <span className="font-medium text-slate-700">חיפוש</span>
           <input
             name="q"
             defaultValue={searchParams.q ?? ""}
-            placeholder="Name, email, phone, company…"
+            placeholder="שם, אימייל, טלפון, חברה…"
             className="w-64 rounded-lg border border-slate-300 px-3 py-2"
           />
         </label>
         <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium text-slate-700">Stage</span>
+          <span className="font-medium text-slate-700">שלב</span>
           <select
             name="stage"
             defaultValue={searchParams.stage ?? ""}
             className="rounded-lg border border-slate-300 px-3 py-2"
           >
-            <option value="">All stages</option>
+            <option value="">כל השלבים</option>
             {allStages.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
@@ -191,13 +191,13 @@ export default async function LeadsPage({
           </select>
         </label>
         <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium text-slate-700">Source</span>
+          <span className="font-medium text-slate-700">מקור</span>
           <select
             name="source"
             defaultValue={searchParams.source ?? ""}
             className="rounded-lg border border-slate-300 px-3 py-2"
           >
-            <option value="">All sources</option>
+            <option value="">כל המקורות</option>
             {sources.map((s) => (
               <option key={s} value={s}>
                 {s}
@@ -206,13 +206,13 @@ export default async function LeadsPage({
           </select>
         </label>
         <button className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">
-          Apply
+          החלה
         </button>
         <Link
           href="/leads"
           className="px-2 py-2 text-sm text-slate-500 hover:text-slate-800"
         >
-          Clear
+          ניקוי
         </Link>
       </form>
 
@@ -220,11 +220,11 @@ export default async function LeadsPage({
         <table className="w-full text-left text-sm">
           <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
             <tr>
-              <th className="px-5 py-3">Name</th>
-              <th className="px-5 py-3">Contact</th>
-              <th className="px-5 py-3">Source</th>
-              <th className="px-5 py-3">Stage</th>
-              <th className="px-5 py-3 text-right">Value</th>
+              <th className="px-5 py-3">שם</th>
+              <th className="px-5 py-3">איש קשר</th>
+              <th className="px-5 py-3">מקור</th>
+              <th className="px-5 py-3">שלב</th>
+              <th className="px-5 py-3 text-right">ערך</th>
             </tr>
           </thead>
           <tbody>
@@ -276,7 +276,7 @@ export default async function LeadsPage({
                   colSpan={5}
                   className="px-5 py-10 text-center text-slate-500"
                 >
-                  No leads match.
+                  לא נמצאו לידים תואמים.
                 </td>
               </tr>
             )}

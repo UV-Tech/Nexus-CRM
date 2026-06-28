@@ -63,22 +63,22 @@ export default async function ReportsPage() {
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold text-slate-900">Reports</h1>
+      <h1 className="text-2xl font-bold text-slate-900">דוחות</h1>
       <p className="mt-1 text-sm text-slate-500">
-        Performance across {organization.name}.
+        ביצועים עבור {organization.name}.
       </p>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Total leads" value={String(allLeads.length)} />
-        <Stat label="Won" value={String(won.length)} />
-        <Stat label="Win rate" value={`${winRate}%`} />
-        <Stat label="Won value" value={fmtMoney(wonValue)} accent />
+        <Stat label="סה״כ לידים" value={String(allLeads.length)} />
+        <Stat label="נסגרו בהצלחה" value={String(won.length)} />
+        <Stat label="שיעור המרה" value={`${winRate}%`} />
+        <Stat label="ערך עסקאות שנסגרו" value={fmtMoney(wonValue)} accent />
       </div>
 
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Leads by source */}
         <section className="rounded-xl border border-slate-200 bg-white p-6">
-          <h2 className="font-semibold text-slate-900">Leads by source</h2>
+          <h2 className="font-semibold text-slate-900">לידים לפי מקור</h2>
           <div className="mt-4 flex flex-col gap-3">
             {sourceRows.map(([source, count]) => (
               <div key={source}>
@@ -95,14 +95,14 @@ export default async function ReportsPage() {
               </div>
             ))}
             {sourceRows.length === 0 && (
-              <p className="text-sm text-slate-500">No data yet.</p>
+              <p className="text-sm text-slate-500">אין נתונים עדיין.</p>
             )}
           </div>
         </section>
 
         {/* Pipeline funnel */}
         <section className="rounded-xl border border-slate-200 bg-white p-6">
-          <h2 className="font-semibold text-slate-900">Pipeline by stage</h2>
+          <h2 className="font-semibold text-slate-900">צינור מכירות לפי שלב</h2>
           <div className="mt-4 flex flex-col gap-3">
             {byStage.map(({ stage, count, value }) => (
               <div key={stage.id}>
@@ -130,7 +130,7 @@ export default async function ReportsPage() {
               </div>
             ))}
             {byStage.length === 0 && (
-              <p className="text-sm text-slate-500">No stages defined.</p>
+              <p className="text-sm text-slate-500">לא הוגדרו שלבים.</p>
             )}
           </div>
         </section>
