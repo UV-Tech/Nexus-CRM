@@ -43,6 +43,24 @@ values
   ('b0000000-0000-0000-0000-000000000000', 'b1000000-0000-0000-0000-000000000000', 'B Lead 2'),
   ('b0000000-0000-0000-0000-000000000000', 'b1000000-0000-0000-0000-000000000000', 'B Lead 3');
 
+-- One row per org across the other tenant tables, so we can prove isolation
+-- holds for all of them (not just leads).
+insert into public.automations (organization_id, name) values
+  ('a0000000-0000-0000-0000-000000000000', 'A automation'),
+  ('b0000000-0000-0000-0000-000000000000', 'B automation');
+
+insert into public.integrations (organization_id, provider, status) values
+  ('a0000000-0000-0000-0000-000000000000', 'whatsapp', 'connected'),
+  ('b0000000-0000-0000-0000-000000000000', 'whatsapp', 'connected');
+
+insert into public.message_templates (organization_id, name, body) values
+  ('a0000000-0000-0000-0000-000000000000', 'A tmpl', 'hi'),
+  ('b0000000-0000-0000-0000-000000000000', 'B tmpl', 'hi');
+
+insert into public.wa_conversations (organization_id, contact_phone) values
+  ('a0000000-0000-0000-0000-000000000000', '+1000000000'),
+  ('b0000000-0000-0000-0000-000000000000', '+2000000000');
+
 -- ---- Act as user A (member of Org A only) -----------------------------------
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"}';
@@ -65,6 +83,18 @@ begin
   assert (select count(*) from public.organization_members
           where organization_id = 'b0000000-0000-0000-0000-000000000000') = 0,
     'LEAK: user A can read Org B membership';
+  -- New tenant tables: user A sees exactly their own row and none of Org B's.
+  assert (select count(*) from public.automations) = 1,
+    'LEAK: user A sees automations beyond their org';
+  assert (select count(*) from public.integrations
+          where organization_id = 'b0000000-0000-0000-0000-000000000000') = 0,
+    'LEAK: user A can read Org B integrations';
+  assert (select count(*) from public.message_templates
+          where organization_id = 'b0000000-0000-0000-0000-000000000000') = 0,
+    'LEAK: user A can read Org B message templates';
+  assert (select count(*) from public.wa_conversations
+          where organization_id = 'b0000000-0000-0000-0000-000000000000') = 0,
+    'LEAK: user A can read Org B WhatsApp conversations';
   raise notice 'User A isolation checks passed';
 end $$;
 

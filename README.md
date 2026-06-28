@@ -165,6 +165,9 @@ supabase/migrations/    # schema + RLS
 
 ### Recently added
 
+- "Send WhatsApp" automation action now drops a queued message into the inbox;
+  "Message on WhatsApp" button on each lead; conversation read receipts;
+  automation run log; CI workflow (typecheck + build).
 - Integrations screen (Facebook/Instagram/Google Ads/WhatsApp) with connect/
   disconnect and per-provider credentials; WhatsApp inbox with reply + message
   templates and an inbound webhook (migration 0007).

@@ -69,6 +69,14 @@ export default async function InboxPage({
       .eq("conversation_id", selected.id)
       .order("created_at");
     messages = (data ?? []) as Message[];
+    // Reset the unread badge now that the conversation is open.
+    if (selected.unread > 0) {
+      await supabase
+        .from("wa_conversations")
+        .update({ unread: 0 })
+        .eq("id", selected.id)
+        .eq("organization_id", organization.id);
+    }
   }
 
   return (

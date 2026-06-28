@@ -11,6 +11,7 @@ import {
 } from "../actions";
 import { getCustomFields } from "@/lib/custom-fields";
 import { CustomFieldInputs } from "@/components/CustomFields";
+import { openLeadConversation } from "../../inbox/actions";
 import type { Lead, LeadActivity, PipelineStage } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -72,6 +73,14 @@ export default async function LeadDetailPage({
             {l.company || "—"} ·{" "}
             <span className="capitalize">{l.source}</span>
           </p>
+          {l.phone && (
+            <form action={openLeadConversation} className="mt-2">
+              <input type="hidden" name="lead_id" value={l.id} />
+              <button className="rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-700">
+                💬 Message on WhatsApp
+              </button>
+            </form>
+          )}
         </div>
         <div className="flex flex-col items-end gap-2">
           <form action={moveLeadStage} className="flex items-center gap-2">

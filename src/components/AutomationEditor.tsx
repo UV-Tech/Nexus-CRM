@@ -99,7 +99,16 @@ function EditorInner({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<string | null>(null);
-  const [idc, setIdc] = useState(1);
+  // Seed the id counter past any node ids already in the saved graph so newly
+  // added nodes never collide with loaded ones (e.g. "node-1").
+  const [idc, setIdc] = useState(() => {
+    let max = 0;
+    for (const n of automation.graph?.nodes ?? []) {
+      const m = /^node-(\d+)$/.exec(n.id);
+      if (m) max = Math.max(max, Number(m[1]));
+    }
+    return max + 1;
+  });
 
   const onConnect = useCallback(
     (c: Connection) =>

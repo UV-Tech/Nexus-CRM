@@ -17,21 +17,36 @@ export default async function AutomationsPage() {
   const { organization } = await getOrgContext();
   const supabase = createClient();
 
-  const [{ data: folders }, { data: automations }] = await Promise.all([
-    supabase
-      .from("automation_folders")
-      .select("*")
-      .eq("organization_id", organization.id)
-      .order("position"),
-    supabase
-      .from("automations")
-      .select("*")
-      .eq("organization_id", organization.id)
-      .order("created_at", { ascending: false }),
-  ]);
+  const [{ data: folders }, { data: automations }, { data: runs }] =
+    await Promise.all([
+      supabase
+        .from("automation_folders")
+        .select("*")
+        .eq("organization_id", organization.id)
+        .order("position"),
+      supabase
+        .from("automations")
+        .select("*")
+        .eq("organization_id", organization.id)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("automation_runs")
+        .select("id, status, detail, created_at, automation_id")
+        .eq("organization_id", organization.id)
+        .order("created_at", { ascending: false })
+        .limit(10),
+    ]);
 
   const allFolders = (folders ?? []) as AutomationFolder[];
   const allAutomations = (automations ?? []) as Automation[];
+  const recentRuns = (runs ?? []) as {
+    id: string;
+    status: string;
+    detail: string | null;
+    created_at: string;
+    automation_id: string;
+  }[];
+  const nameById = new Map(allAutomations.map((a) => [a.id, a.name]));
 
   const groups: { folder: AutomationFolder | null; items: Automation[] }[] = [
     ...allFolders.map((f) => ({
@@ -153,6 +168,45 @@ export default async function AutomationsPage() {
           </section>
         ))}
       </div>
+
+      {/* Recent runs */}
+      <section className="mt-10">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+          Recent runs
+        </h2>
+        <div className="mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white">
+          {recentRuns.map((r) => (
+            <div
+              key={r.id}
+              className="flex items-center justify-between border-b border-slate-50 px-5 py-2.5 text-sm last:border-0"
+            >
+              <span className="text-slate-700">
+                {nameById.get(r.automation_id) ?? "Automation"}
+                <span className="ml-2 text-slate-400">{r.detail}</span>
+              </span>
+              <span className="flex items-center gap-3">
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                    r.status === "error"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-green-100 text-green-700"
+                  }`}
+                >
+                  {r.status}
+                </span>
+                <span className="text-xs text-slate-400">
+                  {new Date(r.created_at).toLocaleString()}
+                </span>
+              </span>
+            </div>
+          ))}
+          {recentRuns.length === 0 && (
+            <p className="px-5 py-6 text-center text-sm text-slate-400">
+              No runs yet. Enable an automation and it&apos;ll appear here.
+            </p>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
             },
             { onConflict: "organization_id,contact_phone" }
           )
-          .select("id, unread")
+          .select("id")
           .single();
 
         if (convo) {
@@ -103,10 +103,8 @@ export async function POST(req: NextRequest) {
             body,
             status: "delivered",
           });
-          await supabase
-            .from("wa_conversations")
-            .update({ unread: (convo.unread ?? 0) + 1 })
-            .eq("id", convo.id);
+          // Atomic increment to avoid races across concurrent deliveries.
+          await supabase.rpc("wa_increment_unread", { convo: convo.id });
         }
       }
     }

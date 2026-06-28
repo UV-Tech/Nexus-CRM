@@ -69,6 +69,51 @@ export async function startConversation(formData: FormData) {
   redirect(`/inbox?c=${data.id}`);
 }
 
+// Open (or create) a WhatsApp conversation for a given lead, then jump to it.
+export async function openLeadConversation(formData: FormData) {
+  const { organization } = await getOrgContext();
+  const supabase = createClient();
+  const leadId = String(formData.get("lead_id") || "");
+
+  const { data: lead } = await supabase
+    .from("leads")
+    .select("name, phone")
+    .eq("id", leadId)
+    .eq("organization_id", organization.id)
+    .maybeSingle();
+
+  if (!lead?.phone) redirect(`/leads/${leadId}?error=No+phone+on+this+lead`);
+
+  const { data: convo } = await supabase
+    .from("wa_conversations")
+    .upsert(
+      {
+        organization_id: organization.id,
+        contact_phone: lead.phone,
+        contact_name: lead.name,
+        lead_id: leadId,
+        last_message_at: new Date().toISOString(),
+      },
+      { onConflict: "organization_id,contact_phone" }
+    )
+    .select("id")
+    .single();
+
+  redirect(convo ? `/inbox?c=${convo.id}` : "/inbox");
+}
+
+// Reset the unread counter when a conversation is opened.
+export async function markConversationRead(conversationId: string) {
+  const { organization } = await getOrgContext();
+  const supabase = createClient();
+  await supabase
+    .from("wa_conversations")
+    .update({ unread: 0 })
+    .eq("id", conversationId)
+    .eq("organization_id", organization.id)
+    .gt("unread", 0);
+}
+
 export async function createTemplate(formData: FormData) {
   const { organization } = await getOrgContext();
   const supabase = createClient();

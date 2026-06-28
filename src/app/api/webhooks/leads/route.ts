@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
       notes: str(payload.notes),
       custom_data: custom,
     })
-    .select("id, organization_id, source, value, stage_id, assigned_to, custom_data")
+    .select("id, organization_id, source, value, stage_id, assigned_to, phone, custom_data")
     .single();
 
   if (insertError) {
@@ -161,6 +161,7 @@ export async function POST(req: NextRequest) {
       value: lead.value,
       stage_id: lead.stage_id,
       assigned_to: lead.assigned_to,
+      phone: lead.phone,
       custom_data: (lead.custom_data ?? {}) as Record<string, unknown>,
     },
   });

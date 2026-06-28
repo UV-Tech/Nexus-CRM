@@ -13,6 +13,7 @@ export interface LeadSnapshot {
   value: number | null;
   stage_id: string | null;
   assigned_to: string | null;
+  phone: string | null;
   custom_data: Record<string, unknown>;
 }
 
@@ -105,8 +106,35 @@ async function runAction(
       }
       return "set field";
     }
-    // External actions require an integration — recorded but not yet sent.
-    case "action.send_whatsapp":
+    // WhatsApp: drop a queued outbound message into the inbox if we have a
+    // phone. Real delivery happens when the WhatsApp API token is wired.
+    case "action.send_whatsapp": {
+      if (!lead.phone) return "whatsapp skipped (no phone)";
+      const { data: convo } = await supabase
+        .from("wa_conversations")
+        .upsert(
+          {
+            organization_id: lead.organization_id,
+            contact_phone: lead.phone,
+            lead_id: lead.id,
+            last_message_at: new Date().toISOString(),
+          },
+          { onConflict: "organization_id,contact_phone" }
+        )
+        .select("id")
+        .single();
+      if (convo) {
+        await supabase.from("wa_messages").insert({
+          organization_id: lead.organization_id,
+          conversation_id: convo.id,
+          direction: "out",
+          body: cfg(node, "template") || "Automated message",
+          status: "queued",
+        });
+      }
+      return "queued whatsapp";
+    }
+    // Other external actions require an integration — recorded, not yet sent.
     case "action.send_email":
     case "action.notify":
       return `pending integration (${node.type})`;

@@ -9,7 +9,7 @@ import { logAudit } from "@/lib/audit";
 import { runAutomations, type LeadSnapshot } from "@/lib/automations/engine";
 
 const LEAD_COLS =
-  "id, organization_id, source, value, stage_id, assigned_to, custom_data";
+  "id, organization_id, source, value, stage_id, assigned_to, phone, custom_data";
 
 function snapshot(row: Record<string, unknown>): LeadSnapshot {
   return {
@@ -19,6 +19,7 @@ function snapshot(row: Record<string, unknown>): LeadSnapshot {
     value: (row.value as number) ?? null,
     stage_id: (row.stage_id as string) ?? null,
     assigned_to: (row.assigned_to as string) ?? null,
+    phone: (row.phone as string) ?? null,
     custom_data: (row.custom_data as Record<string, unknown>) ?? {},
   };
 }

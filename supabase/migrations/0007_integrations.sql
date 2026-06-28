@@ -84,3 +84,14 @@ create policy wac_all on public.wa_conversations
 create policy wam_all on public.wa_messages
   for all using (public.is_org_member(organization_id) or public.is_platform_admin())
   with check (public.is_org_member(organization_id) or public.is_platform_admin());
+
+-- Atomically bump a conversation's unread counter (avoids read-modify-write
+-- races when several inbound messages arrive at once).
+create or replace function public.wa_increment_unread(convo uuid)
+returns void
+language sql
+security definer
+set search_path = public
+as $$
+  update public.wa_conversations set unread = unread + 1 where id = convo;
+$$;
