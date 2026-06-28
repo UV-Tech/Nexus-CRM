@@ -32,5 +32,7 @@ export async function acceptInvite(formData: FormData) {
     });
   }
 
-  redirect("/dashboard");
+  // Owners of a fresh workspace land in the setup wizard; /welcome forwards
+  // everyone else straight to the dashboard.
+  redirect("/welcome");
 }

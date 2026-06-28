@@ -1,5 +1,30 @@
 import { NextResponse, type NextRequest } from "next/server";
+import crypto from "crypto";
 import { createServiceClient } from "@/lib/supabase/server";
+
+// Verifies an optional HMAC-SHA256 signature (hex, optionally "sha256=" prefixed)
+// of the raw body against the org's webhook secret. Returns true if no signature
+// header was sent (signing is opt-in per sender) or if it matches.
+function signatureValid(
+  rawBody: string,
+  header: string | null,
+  secret: string
+): boolean {
+  if (!header) return true; // sender chose not to sign
+  const provided = header.startsWith("sha256=") ? header.slice(7) : header;
+  const expected = crypto
+    .createHmac("sha256", secret)
+    .update(rawBody)
+    .digest("hex");
+  try {
+    return crypto.timingSafeEqual(
+      Buffer.from(provided, "hex"),
+      Buffer.from(expected, "hex")
+    );
+  } catch {
+    return false;
+  }
+}
 
 // Inbound lead intake. External channels (Facebook Lead Ads, Instagram,
 // WhatsApp, Zapier/Make, custom forms) POST a lead here. The per-organization
@@ -28,9 +53,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "missing token" }, { status: 401 });
   }
 
+  const rawBody = await req.text();
   let payload: Record<string, unknown>;
   try {
-    payload = await req.json();
+    payload = JSON.parse(rawBody);
   } catch {
     return NextResponse.json({ error: "invalid JSON body" }, { status: 400 });
   }
@@ -39,12 +65,21 @@ export async function POST(req: NextRequest) {
 
   const { data: org, error: orgError } = await supabase
     .from("organizations")
-    .select("id")
+    .select("id, suspended_at, webhook_secret")
     .eq("intake_token", token)
     .maybeSingle();
 
   if (orgError || !org) {
     return NextResponse.json({ error: "invalid token" }, { status: 401 });
+  }
+
+  if (org.suspended_at) {
+    return NextResponse.json({ error: "organization suspended" }, { status: 403 });
+  }
+
+  // Verify the optional HMAC signature against the org's webhook secret.
+  if (!signatureValid(rawBody, req.headers.get("x-signature"), org.webhook_secret)) {
+    return NextResponse.json({ error: "invalid signature" }, { status: 401 });
   }
 
   // Default the lead into the first pipeline stage.

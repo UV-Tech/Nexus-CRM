@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
-import { createBusiness, openBusiness } from "./actions";
+import { createBusiness, openBusiness, setSuspended } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +9,7 @@ interface OrgStat {
   name: string;
   slug: string;
   created_at: string;
+  suspended: boolean;
   member_count: number;
   lead_count: number;
   pending_invites: number;
@@ -104,7 +105,14 @@ export default async function AdminPage({
             {orgs.map((o) => (
               <tr key={o.id} className="border-t border-slate-100">
                 <td className="px-5 py-3">
-                  <p className="font-medium text-slate-900">{o.name}</p>
+                  <p className="font-medium text-slate-900">
+                    {o.name}
+                    {o.suspended && (
+                      <span className="ml-2 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
+                        suspended
+                      </span>
+                    )}
+                  </p>
                   <p className="text-xs text-slate-400">{o.slug}</p>
                 </td>
                 <td className="px-5 py-3 text-right text-slate-700">
@@ -116,13 +124,32 @@ export default async function AdminPage({
                 <td className="px-5 py-3 text-right text-slate-700">
                   {o.pending_invites}
                 </td>
-                <td className="px-5 py-3 text-right">
-                  <form action={openBusiness}>
-                    <input type="hidden" name="org_id" value={o.id} />
-                    <button className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100">
-                      Open
-                    </button>
-                  </form>
+                <td className="px-5 py-3">
+                  <div className="flex items-center justify-end gap-2">
+                    <form action={openBusiness}>
+                      <input type="hidden" name="org_id" value={o.id} />
+                      <button className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100">
+                        Open
+                      </button>
+                    </form>
+                    <form action={setSuspended}>
+                      <input type="hidden" name="org_id" value={o.id} />
+                      <input
+                        type="hidden"
+                        name="suspend"
+                        value={o.suspended ? "false" : "true"}
+                      />
+                      <button
+                        className={`rounded-lg px-3 py-1.5 text-xs font-medium ${
+                          o.suspended
+                            ? "bg-green-50 text-green-700 hover:bg-green-100"
+                            : "text-red-600 hover:bg-red-50"
+                        }`}
+                      >
+                        {o.suspended ? "Reactivate" : "Suspend"}
+                      </button>
+                    </form>
+                  </div>
                 </td>
               </tr>
             ))}

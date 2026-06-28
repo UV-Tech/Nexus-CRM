@@ -7,6 +7,19 @@ export interface Organization {
   intake_token: string;
   created_by: string | null;
   created_at: string;
+  suspended_at?: string | null;
+  onboarded_at?: string | null;
+  business_type?: string | null;
+  webhook_secret?: string;
+}
+
+export interface AuditEntry {
+  id: string;
+  organization_id: string | null;
+  actor_id: string | null;
+  action: string;
+  detail: string | null;
+  created_at: string;
 }
 
 export interface PipelineStage {

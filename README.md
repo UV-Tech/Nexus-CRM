@@ -44,8 +44,8 @@ Settings → API** copy the project URL, the `anon` key, and the `service_role` 
 ### 2. Run the migration
 
 In the Supabase SQL editor, run the migration files in `supabase/migrations/`
-in order (`0001` → `0002` → `0003` → `0004`). These create all tables, RLS
-policies, and helper functions.
+in order (`0001` → `0002` → `0003` → `0004` → `0005`). These create all tables,
+RLS policies, and helper functions.
 
 > For local development with the Supabase CLI: `supabase db reset` will apply
 > migrations in `supabase/migrations/`.
@@ -78,9 +78,15 @@ select id from auth.users where email = 'you@example.com';
 ```
 
 Now `/admin` is yours: add a business, copy the generated invite link, and send
-it to that business's owner. They sign up, accept the invite, and land in their
-own isolated workspace. As platform admin you can also "Open" any business to
-work inside it with full access.
+it to that business's owner. They sign up, accept the invite, and land in an
+interactive setup **wizard** (`/welcome`) that tailors their pipeline and
+fields to their business type, lets them invite teammates, and is fully
+skippable — everything stays editable in Settings afterwards.
+
+As platform admin you can also "Open" any business to work inside it with full
+access, **suspend / reactivate** a business, and every access is recorded in
+the per-org **activity log**. The lead-intake webhook supports optional
+**HMAC-SHA256 signing** (per-org secret in Settings).
 
 ## Multi-tenancy & data isolation
 
@@ -143,18 +149,18 @@ supabase/migrations/    # schema + RLS
 ## Roadmap / not yet built
 
 - Sending invite links by email (links are generated; delivery is manual).
-- Signed webhook verification (HMAC) for direct Meta/WhatsApp integrations.
-- Audit log of platform-admin access to tenant data.
-- Suspend/reactivate a business; per-tenant plan limits & billing.
+- Per-tenant plan limits & billing (Stripe).
 - Time-series reporting and CSV export of reports.
 
 ### Recently added
 
+- Interactive, animated onboarding wizard (`/welcome`) tailored by business
+  type, with editable pipeline/fields, team invites, and skip (migration 0005).
+- Activity (audit) log incl. platform-admin access; per-org view in Settings.
+- Suspend / reactivate a business from the admin console.
+- Optional HMAC-SHA256 webhook signature verification (per-org secret).
 - Platform-admin console: closed onboarding, provision a business + owner
   invite link, full-access oversight (migration 0004).
 - Automated RLS data-isolation test (`supabase/tests`).
-- Team invitations via shareable invite links (migration 0003).
-- Multi-organization switching (active-org cookie + sidebar switcher).
-- Lead assignment to team members.
-- Reports page (win rate, leads by source, pipeline by stage).
+- Team invitations, multi-org switching, lead assignment, reports.
 - Drag-and-drop Kanban, custom lead fields, CSV import/export, search/filter.

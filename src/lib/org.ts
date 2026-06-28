@@ -66,6 +66,7 @@ export async function getOrgContext(): Promise<OrgContext> {
     : undefined;
 
   if (membership) {
+    if (membership.organization.suspended_at && !admin) redirect("/suspended");
     return {
       userId: user.id,
       organization: membership.organization,
@@ -93,6 +94,7 @@ export async function getOrgContext(): Promise<OrgContext> {
 
   // No active org: fall back to first membership, else route by role.
   if (orgs.length > 0) {
+    if (orgs[0].organization.suspended_at && !admin) redirect("/suspended");
     return {
       userId: user.id,
       organization: orgs[0].organization,

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/org";
 import { collectCustomData, getCustomFields } from "@/lib/custom-fields";
+import { logAudit } from "@/lib/audit";
 
 export async function createLead(formData: FormData) {
   const { organization, userId } = await getOrgContext();
@@ -42,6 +43,7 @@ export async function createLead(formData: FormData) {
     type: "created",
     body: "Lead created",
   });
+  await logAudit(organization.id, "lead.create", String(formData.get("name") || ""));
 
   revalidatePath("/leads");
   revalidatePath("/pipeline");
@@ -168,6 +170,7 @@ export async function deleteLead(formData: FormData) {
     .delete()
     .eq("id", leadId)
     .eq("organization_id", organization.id);
+  await logAudit(organization.id, "lead.delete", leadId);
 
   revalidatePath("/leads");
   revalidatePath("/pipeline");

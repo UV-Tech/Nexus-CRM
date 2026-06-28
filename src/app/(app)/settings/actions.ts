@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/org";
+import { logAudit } from "@/lib/audit";
 
 export async function addStage(formData: FormData) {
   const { organization } = await getOrgContext();
@@ -115,6 +116,7 @@ export async function createInvitation(formData: FormData) {
     role,
     invited_by: userId,
   });
+  await logAudit(organization.id, "member.invite", email ?? role);
 
   revalidatePath("/settings");
 }
@@ -141,6 +143,16 @@ export async function regenerateIntakeToken() {
   // value by calling the SQL default through an RPC-free approach: set to a new
   // uuid produced by Postgres.
   await supabase.rpc("regenerate_intake_token", { org: organization.id });
+
+  revalidatePath("/settings");
+}
+
+export async function regenerateWebhookSecret() {
+  const { organization } = await getOrgContext();
+  const supabase = createClient();
+
+  await supabase.rpc("regenerate_webhook_secret", { org: organization.id });
+  await logAudit(organization.id, "webhook.regenerate_secret");
 
   revalidatePath("/settings");
 }

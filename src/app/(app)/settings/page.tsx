@@ -9,8 +9,10 @@ import {
   deleteInvitation,
   deleteStage,
   regenerateIntakeToken,
+  regenerateWebhookSecret,
 } from "./actions";
 import type {
+  AuditEntry,
   CustomFieldDefinition,
   OrgRole,
   PipelineStage,
@@ -42,6 +44,7 @@ export default async function SettingsPage() {
     { data: members },
     { data: customFields },
     { data: invitations },
+    { data: audit },
   ] = await Promise.all([
     supabase
       .from("pipeline_stages")
@@ -63,12 +66,19 @@ export default async function SettingsPage() {
       .eq("organization_id", organization.id)
       .is("accepted_at", null)
       .order("created_at", { ascending: false }),
+    supabase
+      .from("audit_log")
+      .select("id, organization_id, actor_id, action, detail, created_at")
+      .eq("organization_id", organization.id)
+      .order("created_at", { ascending: false })
+      .limit(20),
   ]);
 
   const allStages = (stages ?? []) as PipelineStage[];
   const allMembers = (members ?? []) as unknown as MemberRow[];
   const allCustomFields = (customFields ?? []) as CustomFieldDefinition[];
   const allInvitations = (invitations ?? []) as InvitationRow[];
+  const auditEntries = (audit ?? []) as AuditEntry[];
 
   const host = headers().get("host") ?? "your-app.example.com";
   const proto = host.startsWith("localhost") ? "http" : "https";
@@ -240,13 +250,58 @@ export default async function SettingsPage() {
         <pre className="mt-3 overflow-x-auto rounded-lg bg-slate-900 px-4 py-3 text-xs text-slate-100">
           {webhookUrl}
         </pre>
+
+        <p className="mt-4 text-sm text-slate-500">
+          Optional: sign requests with HMAC-SHA256 of the raw body using the
+          secret below and send it in the <code>x-signature</code> header
+          (hex, optional <code>sha256=</code> prefix). Unsigned requests are
+          still accepted.
+        </p>
+        <pre className="mt-2 overflow-x-auto rounded-lg bg-slate-100 px-4 py-3 text-xs text-slate-700">
+          {organization.webhook_secret ?? "(run migration 0005 to enable)"}
+        </pre>
+
         {canManage && (
-          <form action={regenerateIntakeToken} className="mt-3">
-            <button className="text-sm text-slate-500 hover:text-red-600">
-              Regenerate token
-            </button>
-          </form>
+          <div className="mt-3 flex gap-4">
+            <form action={regenerateIntakeToken}>
+              <button className="text-sm text-slate-500 hover:text-red-600">
+                Regenerate token
+              </button>
+            </form>
+            <form action={regenerateWebhookSecret}>
+              <button className="text-sm text-slate-500 hover:text-red-600">
+                Regenerate signing secret
+              </button>
+            </form>
+          </div>
         )}
+      </section>
+
+      {/* Audit log */}
+      <section className="mt-6 rounded-xl border border-slate-200 bg-white p-6">
+        <h2 className="font-semibold text-slate-900">Activity log</h2>
+        <p className="text-sm text-slate-500">
+          Recent actions in this workspace, including platform-admin access.
+        </p>
+        <ul className="mt-4 flex flex-col gap-2">
+          {auditEntries.map((a) => (
+            <li
+              key={a.id}
+              className="flex items-center justify-between border-b border-slate-50 pb-2 text-sm last:border-0"
+            >
+              <span className="text-slate-700">
+                <code className="text-xs text-slate-500">{a.action}</code>
+                {a.detail ? ` · ${a.detail}` : ""}
+              </span>
+              <span className="text-xs text-slate-400">
+                {new Date(a.created_at).toLocaleString()}
+              </span>
+            </li>
+          ))}
+          {auditEntries.length === 0 && (
+            <li className="text-sm text-slate-500">No activity recorded yet.</li>
+          )}
+        </ul>
       </section>
 
       {/* Team */}
