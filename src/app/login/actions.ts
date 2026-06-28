@@ -42,19 +42,12 @@ export async function signUp(formData: FormData) {
     redirect(`/login?mode=signup&error=${encodeURIComponent(error.message)}`);
   }
 
-  // If email confirmation is disabled, we have a session now.
+  // Closed model: signing up creates an account only. Access comes from an
+  // invitation (business owner/teammate) or from being a platform admin.
+  // `orgName` is retained for compatibility but no longer provisions an org.
+  void orgName;
   if (data.session) {
-    // Arriving via an invite link: join that org instead of creating a new one.
-    if (next !== "/dashboard") {
-      redirect(next);
-    }
-    const { error: rpcError } = await supabase.rpc("create_organization", {
-      org_name: orgName || `${fullName || email}'s workspace`,
-    });
-    if (rpcError) {
-      redirect(`/login?mode=signup&error=${encodeURIComponent(rpcError.message)}`);
-    }
-    redirect("/dashboard");
+    redirect(next);
   }
 
   // Otherwise the user must confirm their email first.

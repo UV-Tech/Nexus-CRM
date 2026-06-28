@@ -16,7 +16,7 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { organization, role } = await getOrgContext();
+  const { organization, role, isPlatformAdmin } = await getOrgContext();
   const orgs = await getUserOrganizations();
 
   return (
@@ -61,6 +61,14 @@ export default async function AppLayout({
           ))}
         </nav>
         <div className="border-t border-slate-200 p-3">
+          {isPlatformAdmin && (
+            <Link
+              href="/admin"
+              className="mb-1 block rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700"
+            >
+              ← Platform admin
+            </Link>
+          )}
           <p className="px-3 pb-2 text-xs uppercase tracking-wide text-slate-400">
             {role}
           </p>

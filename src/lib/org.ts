@@ -9,11 +9,18 @@ export interface OrgContext {
   userId: string;
   organization: Organization;
   role: OrgRole;
+  isPlatformAdmin: boolean;
 }
 
 export interface UserOrg {
   organization: Organization;
   role: OrgRole;
+}
+
+export async function isPlatformAdmin(): Promise<boolean> {
+  const supabase = createClient();
+  const { data } = await supabase.rpc("is_platform_admin");
+  return data === true;
 }
 
 // All organizations the signed-in user belongs to, oldest first.
@@ -38,26 +45,61 @@ export async function getUserOrganizations(): Promise<UserOrg[]> {
     }));
 }
 
-// Resolves the user's active organization. Honors the active-org cookie when it
-// points at an org the user still belongs to; otherwise falls back to the first.
+// Resolves the user's active organization.
+// - Members use their membership role for their orgs.
+// - Platform admins can open ANY organization (full access, role 'owner').
+// Routing: no org + admin -> /admin; no org + not admin -> /no-access.
 export async function getOrgContext(): Promise<OrgContext> {
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   if (!user) redirect("/login");
 
+  const admin = await isPlatformAdmin();
   const orgs = await getUserOrganizations();
-  if (orgs.length === 0) redirect("/onboarding");
-
   const activeId = cookies().get(ACTIVE_ORG_COOKIE)?.value;
-  const active =
-    orgs.find((o) => o.organization.id === activeId) ?? orgs[0];
 
-  return {
-    userId: user.id,
-    organization: active.organization,
-    role: active.role,
-  };
+  // Prefer the active-org cookie when it points at a membership.
+  const membership = activeId
+    ? orgs.find((o) => o.organization.id === activeId)
+    : undefined;
+
+  if (membership) {
+    return {
+      userId: user.id,
+      organization: membership.organization,
+      role: membership.role,
+      isPlatformAdmin: admin,
+    };
+  }
+
+  // Platform admin viewing an org they are not a member of.
+  if (admin && activeId) {
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("*")
+      .eq("id", activeId)
+      .maybeSingle();
+    if (org) {
+      return {
+        userId: user.id,
+        organization: org as Organization,
+        role: "owner",
+        isPlatformAdmin: true,
+      };
+    }
+  }
+
+  // No active org: fall back to first membership, else route by role.
+  if (orgs.length > 0) {
+    return {
+      userId: user.id,
+      organization: orgs[0].organization,
+      role: orgs[0].role,
+      isPlatformAdmin: admin,
+    };
+  }
+
+  redirect(admin ? "/admin" : "/no-access");
 }

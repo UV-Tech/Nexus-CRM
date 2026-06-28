@@ -8,8 +8,12 @@ Security.
 
 ## What's inside
 
+- **Platform admin (owner) console** — a closed model where you, the platform
+  owner, provision each business and invite its owner; full oversight at
+  `/admin`. Self-serve org creation is disabled.
 - **Multi-tenancy** — every business is an *organization*; users join orgs with a
-  role (`owner` / `admin` / `agent`). All data is isolated via Postgres RLS.
+  role (`owner` / `admin` / `agent`). All data is isolated via Postgres RLS,
+  verified by an automated isolation test.
 - **Lead management** — leads with contact details, source, value, notes, and a
   flexible `custom_data` JSON field. Per-lead activity timeline.
 - **Customizable pipeline** — each org defines its own stages (name, color,
@@ -40,8 +44,8 @@ Settings → API** copy the project URL, the `anon` key, and the `service_role` 
 ### 2. Run the migration
 
 In the Supabase SQL editor, run the migration files in `supabase/migrations/`
-in order (`0001_init.sql`, then `0002_custom_fields.sql`). These create all
-tables, RLS policies, and helper functions.
+in order (`0001` → `0002` → `0003` → `0004`). These create all tables, RLS
+policies, and helper functions.
 
 > For local development with the Supabase CLI: `supabase db reset` will apply
 > migrations in `supabase/migrations/`.
@@ -60,7 +64,40 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000, create a workspace, and you're in.
+Open http://localhost:3000.
+
+### 5. Become the platform admin (you, the owner)
+
+This is a **closed** platform: only a platform admin provisions businesses.
+Create your account first (sign up at `/login?mode=signup`), then promote it
+once via SQL:
+
+```sql
+insert into public.platform_admins (user_id)
+select id from auth.users where email = 'you@example.com';
+```
+
+Now `/admin` is yours: add a business, copy the generated invite link, and send
+it to that business's owner. They sign up, accept the invite, and land in their
+own isolated workspace. As platform admin you can also "Open" any business to
+work inside it with full access.
+
+## Multi-tenancy & data isolation
+
+Isolation is enforced by **Postgres Row-Level Security**, not application code:
+
+- Every tenant table carries `organization_id`, and each RLS policy checks
+  `is_org_member(organization_id)`. A user simply cannot read rows for an org
+  they don't belong to — the database refuses, regardless of the query.
+- The lead-intake webhook is the only path that bypasses RLS (service role); it
+  is scoped to a single org by the per-org `intake_token`.
+- Platform admins get full access through additive admin-only RLS policies, so
+  granting that power never weakens tenant isolation for normal users.
+
+**Prove it:** run `supabase/tests/rls_isolation_test.sql` in the SQL editor. It
+creates two orgs, then asserts (as each user) that neither can read the other's
+data across every table. It runs in a transaction and rolls back — no data is
+changed. A leak fails the test with an error.
 
 ## Connecting a lead channel
 
@@ -106,17 +143,18 @@ supabase/migrations/    # schema + RLS
 ## Roadmap / not yet built
 
 - Sending invite links by email (links are generated; delivery is manual).
-- A platform-owner/super-admin console to provision and oversee tenants.
 - Signed webhook verification (HMAC) for direct Meta/WhatsApp integrations.
+- Audit log of platform-admin access to tenant data.
+- Suspend/reactivate a business; per-tenant plan limits & billing.
 - Time-series reporting and CSV export of reports.
 
 ### Recently added
 
-- Drag-and-drop Kanban board.
-- Custom lead field definitions (UI + storage).
-- CSV import / export.
-- Lead search, stage/source filters, and lead deletion.
+- Platform-admin console: closed onboarding, provision a business + owner
+  invite link, full-access oversight (migration 0004).
+- Automated RLS data-isolation test (`supabase/tests`).
 - Team invitations via shareable invite links (migration 0003).
 - Multi-organization switching (active-org cookie + sidebar switcher).
 - Lead assignment to team members.
 - Reports page (win rate, leads by source, pipeline by stage).
+- Drag-and-drop Kanban, custom lead fields, CSV import/export, search/filter.

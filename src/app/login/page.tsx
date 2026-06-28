@@ -13,11 +13,11 @@ export default function LoginPage({
     <main className="flex min-h-screen items-center justify-center px-6">
       <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
         <h1 className="text-2xl font-bold text-slate-900">
-          {isSignup ? "Create your workspace" : "Sign in to Nexus CRM"}
+          {isSignup ? "Create your account" : "Sign in to Nexus CRM"}
         </h1>
         <p className="mt-2 text-sm text-slate-500">
           {isSignup
-            ? "Set up your organization and start managing leads."
+            ? "Create an account to accept your invitation."
             : "Welcome back. Enter your details to continue."}
         </p>
 
@@ -38,16 +38,7 @@ export default function LoginPage({
         >
           <input type="hidden" name="next" value={next} />
           {isSignup && (
-            <>
-              <Field label="Full name" name="full_name" type="text" required />
-              <Field
-                label="Organization name"
-                name="org_name"
-                type="text"
-                placeholder="Acme Inc."
-                required
-              />
-            </>
+            <Field label="Full name" name="full_name" type="text" required />
           )}
           <Field label="Email" name="email" type="email" required />
           <Field label="Password" name="password" type="password" required />
