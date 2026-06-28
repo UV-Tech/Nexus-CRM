@@ -110,6 +110,12 @@ export default async function IntegrationsPage() {
                     Connect
                   </Link>
                 )}
+                <Link
+                  href={`/integrations/${p.key}/guide`}
+                  className="text-sm font-medium text-brand-600 hover:underline"
+                >
+                  Step-by-step guide →
+                </Link>
               </div>
             </div>
           );

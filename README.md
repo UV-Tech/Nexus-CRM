@@ -165,6 +165,9 @@ supabase/migrations/    # schema + RLS
 
 ### Recently added
 
+- Interactive, animated step-by-step setup guide for every integration
+  (Integrations → provider → Step-by-step guide): which value to copy from each
+  vendor console and where to paste it, with webhook URLs pre-filled.
 - "Send WhatsApp" automation action now drops a queued message into the inbox;
   "Message on WhatsApp" button on each lead; conversation read receipts;
   automation run log; CI workflow (typecheck + build).

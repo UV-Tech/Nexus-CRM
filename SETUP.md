@@ -67,6 +67,11 @@ Each lead channel posts to a per-org webhook (shown in **Settings** and the
   `/api/webhooks/whatsapp?token=<intake_token>` and set the verify token to
   match the one saved on the WhatsApp integration.
 
+> In-app guides: each provider has an interactive, step-by-step connection
+> guide at **Integrations → (provider) → Step-by-step guide**. It shows exactly
+> which value to copy from each vendor console and where to paste it, with the
+> webhook URLs pre-filled for your workspace.
+
 ### Live OAuth (optional, later)
 
 Facebook/Instagram/Google Ads/WhatsApp can be connected today by pasting
