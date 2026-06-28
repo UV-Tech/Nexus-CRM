@@ -55,6 +55,9 @@ end;
 $$;
 
 -- ---- Extend admin_org_stats with suspended state ----------------------------
+-- The 0004 version returns a different row shape; a return-type change requires
+-- dropping the function first (CREATE OR REPLACE cannot alter OUT params).
+drop function if exists public.admin_org_stats();
 create or replace function public.admin_org_stats()
 returns table (
   id uuid,
