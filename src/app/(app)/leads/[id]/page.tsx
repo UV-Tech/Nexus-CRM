@@ -2,7 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/org";
-import { addActivity, moveLeadStage, updateLead } from "../actions";
+import {
+  addActivity,
+  deleteLead,
+  moveLeadStage,
+  updateLead,
+} from "../actions";
+import { getCustomFields } from "@/lib/custom-fields";
+import { CustomFieldInputs } from "@/components/CustomFields";
 import type { Lead, LeadActivity, PipelineStage } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -25,18 +32,20 @@ export default async function LeadDetailPage({
   if (!lead) notFound();
   const l = lead as Lead;
 
-  const [{ data: stages }, { data: activities }] = await Promise.all([
-    supabase
-      .from("pipeline_stages")
-      .select("*")
-      .eq("organization_id", organization.id)
-      .order("position"),
-    supabase
-      .from("lead_activities")
-      .select("*")
-      .eq("lead_id", l.id)
-      .order("created_at", { ascending: false }),
-  ]);
+  const [{ data: stages }, { data: activities }, customFields] =
+    await Promise.all([
+      supabase
+        .from("pipeline_stages")
+        .select("*")
+        .eq("organization_id", organization.id)
+        .order("position"),
+      supabase
+        .from("lead_activities")
+        .select("*")
+        .eq("lead_id", l.id)
+        .order("created_at", { ascending: false }),
+      getCustomFields(organization.id),
+    ]);
 
   const allStages = (stages ?? []) as PipelineStage[];
   const allActivities = (activities ?? []) as LeadActivity[];
@@ -92,6 +101,7 @@ export default async function LeadDetailPage({
               type="number"
               defaultValue={String(l.value ?? 0)}
             />
+            <CustomFieldInputs fields={customFields} values={l.custom_data} />
             <div className="sm:col-span-2">
               <label className="flex flex-col gap-1.5 text-sm">
                 <span className="font-medium text-slate-700">Notes</span>
@@ -108,6 +118,13 @@ export default async function LeadDetailPage({
                 Save changes
               </button>
             </div>
+          </form>
+
+          <form action={deleteLead} className="mt-4">
+            <input type="hidden" name="lead_id" value={l.id} />
+            <button className="text-sm text-slate-400 hover:text-red-600">
+              Delete lead
+            </button>
           </form>
         </div>
 

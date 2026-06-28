@@ -37,6 +37,24 @@ export interface Lead {
   updated_at: string;
 }
 
+export type CustomFieldType =
+  | "text"
+  | "number"
+  | "date"
+  | "select"
+  | "checkbox";
+
+export interface CustomFieldDefinition {
+  id: string;
+  organization_id: string;
+  key: string;
+  label: string;
+  field_type: CustomFieldType;
+  options: string[];
+  position: number;
+  created_at: string;
+}
+
 export interface LeadActivity {
   id: string;
   organization_id: string;

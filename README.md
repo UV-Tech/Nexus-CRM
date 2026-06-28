@@ -13,9 +13,12 @@ Security.
 - **Lead management** — leads with contact details, source, value, notes, and a
   flexible `custom_data` JSON field. Per-lead activity timeline.
 - **Customizable pipeline** — each org defines its own stages (name, color,
-  won/lost). Kanban board + quick-move controls.
+  won/lost). **Drag-and-drop** Kanban board.
+- **Custom lead fields** — each org defines its own fields (text/number/date/
+  dropdown/checkbox); they render on every lead form and export.
 - **Channel intake** — a per-org webhook URL ingests leads from Facebook Lead
   Ads, Instagram, WhatsApp, Zapier/Make, or custom forms.
+- **Search, filter, CSV import/export** — find leads fast and move data in/out.
 - **Auth** — email/password sign-up provisions a workspace + starter pipeline.
 
 ## Tech stack
@@ -36,9 +39,9 @@ Settings → API** copy the project URL, the `anon` key, and the `service_role` 
 
 ### 2. Run the migration
 
-In the Supabase SQL editor, paste and run the contents of
-`supabase/migrations/0001_init.sql`. This creates all tables, RLS policies, and
-helper functions.
+In the Supabase SQL editor, run the migration files in `supabase/migrations/`
+in order (`0001_init.sql`, then `0002_custom_fields.sql`). These create all
+tables, RLS policies, and helper functions.
 
 > For local development with the Supabase CLI: `supabase db reset` will apply
 > migrations in `supabase/migrations/`.
@@ -103,8 +106,13 @@ supabase/migrations/    # schema + RLS
 ## Roadmap / not yet built
 
 - Email invitations for teammates (UI placeholder exists; roster is live).
-- Drag-and-drop on the Kanban board (currently a quick-move dropdown).
-- Custom-field *definitions* UI (the `custom_data` column already stores them).
 - Multi-organization switching for users in more than one workspace.
 - Signed webhook verification (HMAC) for direct Meta/WhatsApp integrations.
-- Reporting / analytics and CSV import-export.
+- Reporting / analytics dashboards beyond the current summary stats.
+
+### Recently added
+
+- Drag-and-drop Kanban board.
+- Custom lead field definitions (UI + storage).
+- CSV import / export.
+- Lead search, stage/source filters, and lead deletion.

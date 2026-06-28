@@ -4,12 +4,14 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/org";
+import { collectCustomData, getCustomFields } from "@/lib/custom-fields";
 
 export async function createLead(formData: FormData) {
   const { organization, userId } = await getOrgContext();
   const supabase = createClient();
 
   const stageId = String(formData.get("stage_id") || "") || null;
+  const fields = await getCustomFields(organization.id);
 
   const { data: lead, error } = await supabase
     .from("leads")
@@ -24,6 +26,7 @@ export async function createLead(formData: FormData) {
       notes: String(formData.get("notes") || "").trim() || null,
       stage_id: stageId,
       assigned_to: userId,
+      custom_data: collectCustomData(formData, fields),
     })
     .select("id")
     .single();
@@ -106,6 +109,7 @@ export async function updateLead(formData: FormData) {
   const { organization } = await getOrgContext();
   const supabase = createClient();
   const leadId = String(formData.get("lead_id"));
+  const fields = await getCustomFields(organization.id);
 
   const { error } = await supabase
     .from("leads")
@@ -116,6 +120,7 @@ export async function updateLead(formData: FormData) {
       company: String(formData.get("company") || "").trim() || null,
       value: Number(formData.get("value") || 0),
       notes: String(formData.get("notes") || "").trim() || null,
+      custom_data: collectCustomData(formData, fields),
     })
     .eq("id", leadId)
     .eq("organization_id", organization.id);
@@ -126,4 +131,20 @@ export async function updateLead(formData: FormData) {
 
   revalidatePath(`/leads/${leadId}`);
   redirect(`/leads/${leadId}`);
+}
+
+export async function deleteLead(formData: FormData) {
+  const { organization } = await getOrgContext();
+  const supabase = createClient();
+  const leadId = String(formData.get("lead_id"));
+
+  await supabase
+    .from("leads")
+    .delete()
+    .eq("id", leadId)
+    .eq("organization_id", organization.id);
+
+  revalidatePath("/leads");
+  revalidatePath("/pipeline");
+  redirect("/leads");
 }

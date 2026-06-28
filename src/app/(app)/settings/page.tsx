@@ -1,8 +1,18 @@
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/org";
-import { addStage, deleteStage, regenerateIntakeToken } from "./actions";
-import type { OrgRole, PipelineStage } from "@/lib/types";
+import {
+  addCustomField,
+  addStage,
+  deleteCustomField,
+  deleteStage,
+  regenerateIntakeToken,
+} from "./actions";
+import type {
+  CustomFieldDefinition,
+  OrgRole,
+  PipelineStage,
+} from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -17,20 +27,27 @@ export default async function SettingsPage() {
   const supabase = createClient();
   const canManage = role === "owner" || role === "admin";
 
-  const [{ data: stages }, { data: members }] = await Promise.all([
-    supabase
-      .from("pipeline_stages")
-      .select("*")
-      .eq("organization_id", organization.id)
-      .order("position"),
-    supabase
-      .from("organization_members")
-      .select("user_id, role, profiles(full_name)")
-      .eq("organization_id", organization.id),
-  ]);
+  const [{ data: stages }, { data: members }, { data: customFields }] =
+    await Promise.all([
+      supabase
+        .from("pipeline_stages")
+        .select("*")
+        .eq("organization_id", organization.id)
+        .order("position"),
+      supabase
+        .from("organization_members")
+        .select("user_id, role, profiles(full_name)")
+        .eq("organization_id", organization.id),
+      supabase
+        .from("custom_field_definitions")
+        .select("*")
+        .eq("organization_id", organization.id)
+        .order("position"),
+    ]);
 
   const allStages = (stages ?? []) as PipelineStage[];
   const allMembers = (members ?? []) as unknown as MemberRow[];
+  const allCustomFields = (customFields ?? []) as CustomFieldDefinition[];
 
   const host = headers().get("host") ?? "your-app.example.com";
   const proto = host.startsWith("localhost") ? "http" : "https";
@@ -100,6 +117,90 @@ export default async function SettingsPage() {
             </label>
             <button className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
               Add stage
+            </button>
+          </form>
+        )}
+      </section>
+
+      {/* Custom fields */}
+      <section className="mt-6 rounded-xl border border-slate-200 bg-white p-6">
+        <h2 className="font-semibold text-slate-900">Custom lead fields</h2>
+        <p className="text-sm text-slate-500">
+          Add fields specific to your business. They appear on every lead form.
+        </p>
+
+        <ul className="mt-4 flex flex-col gap-2">
+          {allCustomFields.map((f) => (
+            <li
+              key={f.id}
+              className="flex items-center justify-between rounded-lg border border-slate-100 px-3 py-2"
+            >
+              <span className="flex items-center gap-2">
+                <span className="font-medium text-slate-800">{f.label}</span>
+                <span className="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-500">
+                  {f.field_type}
+                </span>
+                {f.field_type === "select" && f.options.length > 0 && (
+                  <span className="text-xs text-slate-400">
+                    {f.options.join(", ")}
+                  </span>
+                )}
+              </span>
+              {canManage && (
+                <form action={deleteCustomField}>
+                  <input type="hidden" name="field_id" value={f.id} />
+                  <button className="text-sm text-slate-400 hover:text-red-600">
+                    Remove
+                  </button>
+                </form>
+              )}
+            </li>
+          ))}
+          {allCustomFields.length === 0 && (
+            <li className="text-sm text-slate-500">No custom fields yet.</li>
+          )}
+        </ul>
+
+        {canManage && (
+          <form
+            action={addCustomField}
+            className="mt-4 flex flex-wrap items-end gap-3"
+          >
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium text-slate-700">Field label</span>
+              <input
+                name="label"
+                required
+                placeholder="e.g. Budget"
+                className="rounded-lg border border-slate-300 px-3 py-2"
+              />
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium text-slate-700">Type</span>
+              <select
+                name="field_type"
+                defaultValue="text"
+                className="rounded-lg border border-slate-300 px-3 py-2"
+              >
+                <option value="text">Text</option>
+                <option value="number">Number</option>
+                <option value="date">Date</option>
+                <option value="select">Dropdown</option>
+                <option value="checkbox">Checkbox</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-1 text-sm">
+              <span className="font-medium text-slate-700">
+                Options (for dropdown)
+              </span>
+              <input
+                name="options"
+                placeholder="comma,separated,values"
+                className="rounded-lg border border-slate-300 px-3 py-2"
+              />
+            </label>
+            <button className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">
+              Add field
             </button>
           </form>
         )}

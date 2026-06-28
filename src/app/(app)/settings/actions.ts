@@ -46,6 +46,62 @@ export async function deleteStage(formData: FormData) {
   revalidatePath("/pipeline");
 }
 
+export async function addCustomField(formData: FormData) {
+  const { organization } = await getOrgContext();
+  const supabase = createClient();
+
+  const label = String(formData.get("label") || "").trim();
+  const fieldType = String(formData.get("field_type") || "text");
+  if (!label) return;
+
+  // Derive a stable machine key from the label.
+  const key = label
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+  if (!key) return;
+
+  const options = String(formData.get("options") || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const { data: last } = await supabase
+    .from("custom_field_definitions")
+    .select("position")
+    .eq("organization_id", organization.id)
+    .order("position", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  await supabase.from("custom_field_definitions").insert({
+    organization_id: organization.id,
+    key,
+    label,
+    field_type: fieldType,
+    options,
+    position: (last?.position ?? -1) + 1,
+  });
+
+  revalidatePath("/settings");
+  revalidatePath("/leads");
+}
+
+export async function deleteCustomField(formData: FormData) {
+  const { organization } = await getOrgContext();
+  const supabase = createClient();
+  const id = String(formData.get("field_id"));
+
+  await supabase
+    .from("custom_field_definitions")
+    .delete()
+    .eq("id", id)
+    .eq("organization_id", organization.id);
+
+  revalidatePath("/settings");
+  revalidatePath("/leads");
+}
+
 export async function regenerateIntakeToken() {
   const { organization } = await getOrgContext();
   const supabase = createClient();
